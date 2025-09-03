@@ -154,8 +154,8 @@
     <ClCompile Include="Assignment1Test.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="EBO.cpp" />
-    <ClCompile Include="FALL2024.cpp" />
     <ClCompile Include="GameWindow.cpp" />
+    <ClCompile Include="Juve_Engine.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="ObjectMesh.cpp" />
