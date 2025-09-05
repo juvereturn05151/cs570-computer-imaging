@@ -150,6 +150,9 @@
     <ClCompile Include="imgui\imgui_widgets.cpp">
       <Filter>Source Files\Engine\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="CustomImgui.cpp">
+      <Filter>Source Files\Engine\imgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VectorTemplated.h">
@@ -237,6 +240,9 @@
       <Filter>Header Files\Engine\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imstb_truetype.h">
+      <Filter>Header Files\Engine\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomImgui.h">
       <Filter>Header Files\Engine\imgui</Filter>
     </ClInclude>
   </ItemGroup>

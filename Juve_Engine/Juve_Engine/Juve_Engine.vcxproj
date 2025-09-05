@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClCompile Include="Assignment1Test.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CustomImgui.cpp" />
     <ClCompile Include="EBO.cpp" />
     <ClCompile Include="GameWindow.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -190,6 +191,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CustomImgui.h" />
     <ClInclude Include="EBO.h" />
     <ClInclude Include="GameWindow.h" />
     <ClInclude Include="imgui\imconfig.h" />
