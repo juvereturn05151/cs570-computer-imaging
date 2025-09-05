@@ -2,10 +2,10 @@
 
 Mesh::Mesh(Vector3 color, float alpha, Shader* shaderProgram) : color(color), alpha(alpha), shader(shaderProgram)
 {
-
+    material = new Material(shaderProgram);
 }
 
-void Mesh::setupBuffers() 
+void Mesh::setupBuffers()
 {
     VAO1 = new VAO();
     VAO1->Bind();
@@ -18,9 +18,9 @@ void Mesh::setupBuffers()
     VAO1->LinkAttrib(*VBO1, 2, 2, GL_FLOAT, 9 * sizeof(float), (void*)(7 * sizeof(float)));
 }
 
-void Mesh::SetShader(Shader* shaderProgram)
+void Mesh::editBuffers()
 {
-    shader = shaderProgram;
+    VBO1->EditVBO(&vertices[0], vertices.size() * sizeof(GLfloat));
 }
 
 void Mesh::draw()
@@ -30,41 +30,71 @@ void Mesh::draw()
         return;
     }
 
-    if (shader != NULL) 
+    if (material != NULL)
     {
-        GLint isUsingTexture = glGetUniformLocation(shader->ID, "useTexture");
-        glUniform1i(isUsingTexture, hasTexture);
-    }
-
-
-    if (texture != NULL)
-    {
-        texture->Bind();
+        material->Draw();
     }
 
     VAO1->Bind();
 
+    glEnable(GL_DEPTH_TEST);
+
+    // 2. Render transparent objects (like characters with alpha)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDepthMask(GL_FALSE);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glDepthMask(GL_TRUE);
 }
 
-void Mesh::cleanup() 
+void Mesh::cleanup()
 {
     // Cleanup the buffers if necessary
-    VAO1->Delete();
-    VBO1->Delete();
-    EBO1->Delete();
-
-    if (texture != NULL) 
+    if (VAO1 != NULL)
     {
-        texture->Delete();
+        VAO1->Delete();
+        delete VAO1;
+    }
+
+    if (VBO1 != NULL)
+    {
+        VBO1->Delete();
+        delete VBO1;
+    }
+
+    if (EBO1 != NULL)
+    {
+        EBO1->Delete();
+        delete EBO1;
+    }
+
+    if (material != NULL)
+    {
+        material->Delete();
+        delete material;
     }
 }
 
 void Mesh::AddTexture()
 {
-    hasTexture = true;
-    texture = new Texture("pop_cat.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-    texture->texUnit(*shader, "tex0", 0);
+    if (material != NULL)
+    {
+        material->AddTexture();
+    }
+}
+
+void Mesh::AddTexture(std::string textureName)
+{
+    if (material != NULL)
+    {
+        material->AddTexture(textureName);
+    }
+}
+
+void Mesh::AddTexture(std::string textureName, GLenum format)
+{
+    if (material != NULL)
+    {
+        material->AddTexture(textureName, format);
+    }
 }

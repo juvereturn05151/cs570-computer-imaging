@@ -156,6 +156,7 @@
     <ClCompile Include="EBO.cpp" />
     <ClCompile Include="GameWindow.cpp" />
     <ClCompile Include="Juve_Engine.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="ObjectMesh.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="EBO.h" />
     <ClInclude Include="GameWindow.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Matrix4.h" />
     <ClInclude Include="Matrix4_impl.h" />
     <ClInclude Include="Mesh.h" />

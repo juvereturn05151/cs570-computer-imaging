@@ -120,6 +120,9 @@
     <ClCompile Include="Juve_Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VectorTemplated.h">
@@ -180,6 +183,9 @@
       <Filter>Header Files\Engine\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
       <Filter>Header Files\Engine\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
