@@ -24,6 +24,8 @@ public:
     // Update the scene (e.g., for animations or physics)
     void update(float deltaTime);
 
+	void swapBuffers();
+
     // Destructor to clean up dynamically allocated objects
     ~Scene();
 };

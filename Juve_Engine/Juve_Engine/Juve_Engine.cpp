@@ -18,18 +18,38 @@ int main()
 
         scene->assignObjects();
 
+        // Refactor Later
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		ImGui::StyleColorsDark();
+        ImGui_ImplGlfw_InitForOpenGL(window.getWindow(), true);
 		ImGui_ImplOpenGL3_Init("#version 330");
 
         while (!window.shouldClose()) {
             window.pollEvents();
 
             scene->update(1.0f);
+
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame();
+
+			ImGui::Begin("Hello, world!");
+			ImGui::Text("This is some useful text.");
+			ImGui::End();
+
             scene->draw();
+
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+			scene->swapBuffers();
         }
+
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
 
         delete camera;
         delete scene;

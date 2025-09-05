@@ -56,8 +56,9 @@ void Scene::draw() {
     {
         obj->draw();
     }
+}
 
-    // Swap buffers after rendering
+void Scene::swapBuffers() {
     renderer.swapBuffers();
 }
 
