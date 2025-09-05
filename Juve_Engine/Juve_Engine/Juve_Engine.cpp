@@ -1,3 +1,7 @@
+#include"imgui.h"
+#include"imgui_impl_glfw.h"
+#include"imgui_impl_opengl3.h"
+
 #include <iostream>
 #include "GameWindow.h"
 #include "Renderer.h"
@@ -13,6 +17,12 @@ int main()
         Scene * scene = new Scene(camera,renderer);
 
         scene->assignObjects();
+
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		ImGui::StyleColorsDark();
+		ImGui_ImplOpenGL3_Init("#version 330");
 
         while (!window.shouldClose()) {
             window.pollEvents();
