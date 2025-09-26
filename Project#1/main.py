@@ -7,7 +7,7 @@ from events import bind_events, setup_window_resize_monitor
 def main():
     root = tk.Tk()
     root.title("CS 570 Project#1")
-
+    root.geometry("1080x520")
     #setup GUI frames and get frame references
     topFrame, operationFrame, imageFrame, outputImageFrame, commandFrame = setup_frames(root)
 

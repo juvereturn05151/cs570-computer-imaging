@@ -8,6 +8,7 @@ def setup_frames(root):
     operationFrame = tk.Frame(topFrame)
     inputFrame = tk.Frame(topFrame)
     outputFrame = tk.Frame(topFrame)
+    commandFrame = tk.Frame(root)
 
     topFrame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
@@ -19,7 +20,9 @@ def setup_frames(root):
     outputFrame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
     outputFrame.pack_propagate(False)
 
-    return topFrame, operationFrame, inputFrame, outputFrame, tk.Frame(root)
+    commandFrame.pack(side=tk.BOTTOM, fill=tk.X)
+
+    return topFrame, operationFrame, inputFrame, outputFrame, commandFrame
 
 def setup_treeview(operationFrame):
     """Create and configure the treeview widget for image selection"""
