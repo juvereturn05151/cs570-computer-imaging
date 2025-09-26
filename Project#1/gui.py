@@ -2,26 +2,26 @@ import os
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
-from image_ops import create_negative_image
+from image_ops import create_negative_image, nearest_neighbor
 
 
 def select_image(imageName, imageLabel, outputImageLabel, imageData):
-    # Update the input image
-    imageLabel.config(image=imageData[imageName])
+    # Update input image
+    pil_input = imageData[imageName]["input"]["pil"]
+    tk_input = imageData[imageName]["input"]["tk"]
+    imageLabel.config(image=tk_input)
+    imageLabel.tk_image = tk_input
+    imageLabel.original_pil = pil_input
+    imageLabel.pil_image = pil_input
 
-    # Load the original PIL image and create negative
-    pil_Image = Image.open('data/' + imageName)
-    negative_pil = create_negative_image(pil_Image)  # This should return a PIL Image
+    # Update output image
+    pil_output = imageData[imageName]["output"]["pil"]
+    tk_output = imageData[imageName]["output"]["tk"]
+    outputImageLabel.config(image=tk_output)
+    outputImageLabel.tk_image = tk_output
+    outputImageLabel.original_pil = pil_output
+    outputImageLabel.pil_image = pil_output
 
-    # Convert PIL Image to PhotoImage for display
-    negativeTk = ImageTk.PhotoImage(negative_pil)
-
-    # Update the output image label
-    outputImageLabel.config(image=negativeTk)
-    outputImageLabel.tk_image = negativeTk  # Store reference to prevent garbage collection
-    outputImageLabel.pil_image = negative_pil  # Store PIL image for saving
-
-    outputImageLabel.pack(padx=10, pady=10)
 
 
 def on_tree_select(event, treeView, imageLabel, outputImageLabel, imageData):
@@ -56,3 +56,15 @@ def save_output_image(fileName, outputImageLabel):
         print(f"Image saved to save_images/{fileName}")
     else:
         print("No output image to save")
+
+def resize_image_to_fit(pil_image, widget_width, widget_height):
+    original_width, original_height = pil_image.size
+
+    width_ratio = widget_width / original_width
+    height_ratio = widget_height / original_height
+    scale_ratio = min(width_ratio, height_ratio)
+
+    new_width = max(1, int(original_width * scale_ratio))
+    new_height = max(1, int(original_height * scale_ratio))
+
+    return nearest_neighbor(pil_image, new_width, new_height)
