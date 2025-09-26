@@ -1,10 +1,8 @@
 import tkinter as tk  # Import tkinter for GUI creation
 from tkinter import ttk  # Import themed tkinter widgets
 import gc  # Import garbage collector for memory management
-from image_ops import create_negative_image  # Import function to create negative images
 from commands import execute_command  # Import command execution function
-from PIL import Image, ImageTk  # Import PIL for image processing and tkinter integration
-import os  # Import os for file path operations
+from image_data import load_default_images
 from events import bind_events, setup_window_resize_monitor
 
 def setup_frames(root):
@@ -38,40 +36,6 @@ def setup_treeview(operationFrame):
     treeView.pack(padx=10, pady=10)
     # Return treeview and root item ID
     return treeView, rootIID
-
-
-def load_default_images(treeView, rootIID):
-    """Load default images and populate the treeview"""
-    imageData = {}  # Dictionary to store image info
-
-    filenameList = ['data/cameraman.ppm', 'data/butterfly-16.ppm', 'data/apple-20.ppm']
-
-    for filename in filenameList:
-        pil_img = Image.open(filename)  # PIL Image
-        tk_img = ImageTk.PhotoImage(pil_img)  # Tkinter PhotoImage
-
-        # Create default negative output
-        neg_pil = create_negative_image(pil_img)
-        neg_tk = ImageTk.PhotoImage(neg_pil)
-
-        name = os.path.basename(filename)
-
-        # Store both input and output images in dictionary
-        imageData[name] = {
-            "input": {
-                "pil": pil_img,
-                "tk": tk_img
-            },
-            "output": {
-                "pil": neg_pil,
-                "tk": neg_tk
-            }
-        }
-
-        # Add to treeview
-        treeView.insert(rootIID, -1, text=name)
-
-    return imageData
 
 
 def setup_image_labels(imageFrame, outputImageFrame, imageData, default_name='apple-20.ppm'):
@@ -146,13 +110,9 @@ def main():
     # Setup window resize monitoring
     setup_window_resize_monitor(root, imageLabel, outputImageLabel)
 
-    # Start tkinter main event loop
     root.mainloop()
-
-    # Force garbage collection after application closes
     gc.collect()
 
 
-# Standard Python idiom to check if this file is being run directly
 if __name__ == "__main__":
-    main()  # Execute main function if file is run directly
+    main()
