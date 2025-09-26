@@ -20,14 +20,21 @@ def load_default_images(treeView, rootIID):
 
     return imageData
 
-def copy_images(imageData):
+def copy_images(imageData, treeView, rootIID):
     newImageData = {}
 
     for name, imgDict in imageData.items():
+        # Duplicate the PIL image
+        pil_copy = imgDict["pil"].copy()
+        # Create a new Tk wrapper for that copy
+        tk_copy = ImageTk.PhotoImage(pil_copy)
+
         newImageData[name] = {
-            "pil": imgDict["pil"],
-            "tk": imgDict["tk"],
+            "pil": pil_copy,
+            "tk": tk_copy,
         }
+
+        treeView.insert(rootIID, -1, text=name)
 
     return newImageData
 
