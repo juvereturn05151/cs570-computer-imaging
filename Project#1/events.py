@@ -2,9 +2,9 @@ from PIL import ImageTk
 from gui import on_tree_select
 from image_ops import nearest_neighbor
 
-def bind_events(treeView, imageLabel, outputImageLabel, imageData):
+def bind_events(treeView, imageLabel, outputImageLabel, imageData, output_image_frame):
     treeView.bind('<<TreeviewSelect>>',
-                  lambda e: on_tree_select(e, treeView, imageLabel, outputImageLabel, imageData))
+                  lambda e: on_tree_select(e, treeView, imageLabel, outputImageLabel, imageData, output_image_frame))
 
 def setup_window_resize_monitor(root, inputLabel, outputImageLabel):
     """Setup event handler to monitor window resize and print image sizes"""

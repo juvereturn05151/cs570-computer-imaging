@@ -1,20 +1,19 @@
 import os
 from PIL import Image, ImageTk
-from image_ops import create_negative_image, nearest_neighbor
 
 
-def select_image(imageName, imageLabel, outputImageLabel, imageData):
+def select_image(imageName, imageLabel, outputImageLabel, imageData, output_image_frame):
     # Update input image
-    pil_input = imageData[imageName]["input"]["pil"]
-    tk_input = imageData[imageName]["input"]["tk"]
+    pil_input = imageData[imageName]["pil"]
+    tk_input = imageData[imageName]["tk"]
     imageLabel.config(image=tk_input)
     imageLabel.tk_image = tk_input
     imageLabel.original_pil = pil_input
     imageLabel.pil_image = pil_input
 
     # Update output image
-    pil_output = imageData[imageName]["output"]["pil"]
-    tk_output = imageData[imageName]["output"]["tk"]
+    pil_output = output_image_frame[imageName]["pil"]
+    tk_output = output_image_frame[imageName]["tk"]
     outputImageLabel.config(image=tk_output)
     outputImageLabel.tk_image = tk_output
     outputImageLabel.original_pil = pil_output
@@ -22,12 +21,12 @@ def select_image(imageName, imageLabel, outputImageLabel, imageData):
 
 
 
-def on_tree_select(event, treeView, imageLabel, outputImageLabel, imageData):
+def on_tree_select(event, treeView, imageLabel, outputImageLabel, imageData, output_image_frame):
     selectedItem = treeView.focus()
     itemDetails = treeView.item(selectedItem)
     itemText = itemDetails['text']
     if itemText in imageData.keys():
-        select_image(itemText, imageLabel, outputImageLabel, imageData)
+        select_image(itemText, imageLabel, outputImageLabel, imageData, output_image_frame)
 
 
 def load_image(loadFilename, imageData, treeView=None, rootIID=None):
@@ -54,15 +53,3 @@ def save_output_image(fileName, outputImageLabel):
         print(f"Image saved to save_images/{fileName}")
     else:
         print("No output image to save")
-
-def resize_image_to_fit(pil_image, widget_width, widget_height):
-    original_width, original_height = pil_image.size
-
-    width_ratio = widget_width / original_width
-    height_ratio = widget_height / original_height
-    scale_ratio = min(width_ratio, height_ratio)
-
-    new_width = max(1, int(original_width * scale_ratio))
-    new_height = max(1, int(original_height * scale_ratio))
-
-    return nearest_neighbor(pil_image, new_width, new_height)

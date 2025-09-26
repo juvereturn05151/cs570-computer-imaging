@@ -5,52 +5,56 @@ from commands import execute_command
 def setup_frames(root):
     """Create and organize all frames in the main window"""
     topFrame = tk.Frame(root)
-    operationFrame = tk.Frame(topFrame)
-    inputFrame = tk.Frame(topFrame)
-    outputFrame = tk.Frame(topFrame)
-    commandFrame = tk.Frame(root)
+    operation_frame = tk.Frame(topFrame)
+    input_image_frame = tk.Frame(topFrame)
+    input_image_frame2 = tk.Frame(topFrame)
+    output_image_frame = tk.Frame(topFrame)
+    command_frame = tk.Frame(root)
 
     topFrame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-    operationFrame.pack(side=tk.LEFT, fill=tk.Y)
+    operation_frame.pack(side=tk.LEFT, fill=tk.Y)
 
-    inputFrame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-    inputFrame.pack_propagate(False)
+    input_image_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    input_image_frame.pack_propagate(False)
 
-    outputFrame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
-    outputFrame.pack_propagate(False)
+    input_image_frame2.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    input_image_frame2.pack_propagate(False)
 
-    commandFrame.pack(side=tk.BOTTOM, fill=tk.X)
+    output_image_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+    output_image_frame.pack_propagate(False)
 
-    return topFrame, operationFrame, inputFrame, outputFrame, commandFrame
+    command_frame.pack(side=tk.BOTTOM, fill=tk.X)
 
-def setup_treeview(operationFrame):
+    return topFrame, operation_frame, input_image_frame, input_image_frame2, output_image_frame, command_frame
+
+def setup_treeview(operation_frame):
     """Create and configure the treeview widget for image selection"""
-    treeView = ttk.Treeview(operationFrame, selectmode='browse')
+    treeView = ttk.Treeview(operation_frame, selectmode='browse')
     # Insert root item for image list with empty parent and auto index
     rootIID = treeView.insert('',-1, text="Image List")
     treeView.pack(padx=5, pady=5)
     return treeView, rootIID
 
-def setup_image_labels(inputFrame, outputFrame, imageData, default_name='apple-20.ppm'):
+def setup_image_labels(input_image_frame, output_image_frame, imageData, output_image_data, default_name='apple-20.ppm'):
     if default_name not in imageData:
         raise ValueError(f"Default image '{default_name}' not found in imageData")
 
     # setup input image
-    pil_input = imageData[default_name]["input"]["pil"]
-    tk_input = imageData[default_name]["input"]["tk"]
+    pil_input = imageData[default_name]["pil"]
+    tk_input = imageData[default_name]["tk"]
 
-    inputLabel = tk.Label(inputFrame, image=tk_input)
+    inputLabel = tk.Label(input_image_frame, image=tk_input)
     inputLabel.pack(padx=10, pady=10)
 
     inputLabel.original_pil = pil_input
     inputLabel.pil_image = pil_input
     inputLabel.tk_image = tk_input
 
-    pil_output = imageData[default_name]["output"]["pil"]
-    tk_output = imageData[default_name]["output"]["tk"]
+    pil_output = output_image_data[default_name]["pil"]
+    tk_output = output_image_data[default_name]["tk"]
 
-    outputLabel = tk.Label(outputFrame, image=tk_output)
+    outputLabel = tk.Label(output_image_frame, image=tk_output)
     outputLabel.pack(padx=10, pady=10)
 
     outputLabel.original_pil = pil_output

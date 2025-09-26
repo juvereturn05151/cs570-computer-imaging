@@ -14,10 +14,25 @@ def load_default_images(treeView, rootIID):
         name = os.path.basename(filename)
 
         imageData[name] = {
-            "input": {"pil": pil_image, "tk": tk_image},
-            "output": {"pil": neg_pil_image, "tk": neg_tk_image},
+            "pil": pil_image,
+            "tk": tk_image
         }
 
         treeView.insert(rootIID, -1, text=name)
 
     return imageData
+
+def load_negative_images(imageData):
+    negImageData = {}
+
+    for name, imgDict in imageData.items():
+        orig_pil = imgDict["pil"]
+        neg_pil = create_negative_image(orig_pil)
+        neg_tk = ImageTk.PhotoImage(neg_pil)
+
+        negImageData[name] = {
+            "pil": neg_pil,
+            "tk": neg_tk,
+        }
+
+    return negImageData

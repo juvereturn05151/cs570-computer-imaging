@@ -1,7 +1,7 @@
 import tkinter as tk
 import gc
 from gui_setup import setup_frames, setup_treeview, setup_image_labels, setup_command_interface
-from image_data import load_default_images
+from image_data import load_default_images, load_negative_images
 from events import bind_events, setup_window_resize_monitor
 
 def main():
@@ -9,22 +9,24 @@ def main():
     root.title("CS 570 Project#1")
     root.geometry("1080x520")
     #setup GUI frames and get frame references
-    topFrame, operationFrame, imageFrame, outputImageFrame, commandFrame = setup_frames(root)
+    top_frame, operation_frame, input_image_frame, input_image_frame, output_image_frame, command_frame = setup_frames(root)
 
     #setup treeview and get treeview reference and root item ID
-    treeView, rootIID = setup_treeview(operationFrame)
+    treeView, rootIID = setup_treeview(operation_frame)
 
     #load default images and store in imageData dictionary
-    imageData = load_default_images(treeView, rootIID)
+    input_image_data = load_default_images(treeView, rootIID)
+
+    output_image_data = load_negative_images(input_image_data)
 
     #setup image display labels and get label references
-    imageLabel, outputImageLabel = setup_image_labels(imageFrame, outputImageFrame, imageData)
+    imageLabel, outputImageLabel = setup_image_labels(input_image_frame, output_image_frame, input_image_data, output_image_data)
 
     #setup command interface
-    command_entry = setup_command_interface(commandFrame, imageData, treeView, rootIID, outputImageLabel)
+    command_entry = setup_command_interface(command_frame, input_image_data, treeView, rootIID, outputImageLabel)
 
     #bind event handlers to widgets
-    bind_events(treeView, imageLabel, outputImageLabel, imageData)
+    bind_events(treeView, imageLabel, outputImageLabel, input_image_data, output_image_data)
 
     #setup window resize monitoring
     setup_window_resize_monitor(root, imageLabel, outputImageLabel)
