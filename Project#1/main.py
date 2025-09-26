@@ -20,16 +20,16 @@ def main():
     output_image_data = load_negative_images(input_image_data)
 
     #setup image display labels and get label references
-    imageLabel, outputImageLabel = setup_image_labels(input_image_frame, output_image_frame, input_image_data, output_image_data)
+    input_image_label, outputImageLabel = setup_image_labels(input_image_frame, output_image_frame, input_image_data, output_image_data)
 
     #setup command interface
     command_entry = setup_command_interface(command_frame, input_image_data, treeView, rootIID, outputImageLabel)
 
     #bind event handlers to widgets
-    bind_events(treeView, imageLabel, outputImageLabel, input_image_data, output_image_data)
+    bind_events(treeView, input_image_label, outputImageLabel, input_image_data, output_image_data)
 
     #setup window resize monitoring
-    setup_window_resize_monitor(root, imageLabel, outputImageLabel)
+    setup_window_resize_monitor(root, input_image_label, outputImageLabel)
 
     root.mainloop()
     gc.collect()

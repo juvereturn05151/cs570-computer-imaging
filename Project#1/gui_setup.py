@@ -36,13 +36,13 @@ def setup_treeview(operation_frame):
     treeView.pack(padx=5, pady=5)
     return treeView, rootIID
 
-def setup_image_labels(input_image_frame, output_image_frame, imageData, output_image_data, default_name='apple-20.ppm'):
-    if default_name not in imageData:
+def setup_image_labels(input_image_frame, output_image_frame, input_image_data, output_image_data, default_name='apple-20.ppm'):
+    if default_name not in input_image_data:
         raise ValueError(f"Default image '{default_name}' not found in imageData")
 
     # setup input image
-    pil_input = imageData[default_name]["pil"]
-    tk_input = imageData[default_name]["tk"]
+    pil_input = input_image_data[default_name]["pil"]
+    tk_input = input_image_data[default_name]["tk"]
 
     inputLabel = tk.Label(input_image_frame, image=tk_input)
     inputLabel.pack(padx=10, pady=10)

@@ -9,8 +9,6 @@ def load_default_images(treeView, rootIID):
     for filename in filenameList:
         pil_image = Image.open(filename)
         tk_image = ImageTk.PhotoImage(pil_image)
-        neg_pil_image = create_negative_image(pil_image)
-        neg_tk_image = ImageTk.PhotoImage(neg_pil_image)
         name = os.path.basename(filename)
 
         imageData[name] = {
