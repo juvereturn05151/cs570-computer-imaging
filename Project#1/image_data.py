@@ -20,6 +20,17 @@ def load_default_images(treeView, rootIID):
 
     return imageData
 
+def copy_images(imageData):
+    newImageData = {}
+
+    for name, imgDict in imageData.items():
+        newImageData[name] = {
+            "pil": imgDict["pil"],
+            "tk": imgDict["tk"],
+        }
+
+    return newImageData
+
 def load_negative_images(imageData):
     negImageData = {}
 

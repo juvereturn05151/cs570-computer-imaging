@@ -1,7 +1,7 @@
 import tkinter as tk
 import gc
 from gui_setup import setup_frames, setup_treeview, setup_image_labels, setup_command_interface
-from image_data import load_default_images, load_negative_images
+from image_data import load_default_images, load_negative_images, copy_images
 from events import bind_events, setup_window_resize_monitor
 
 def main():
@@ -16,20 +16,20 @@ def main():
 
     #load default images and store in imageData dictionary
     input_image_data = load_default_images(treeView, rootIID)
-
+    input_image_data2 = copy_images(input_image_data)
     output_image_data = load_negative_images(input_image_data)
 
     #setup image display labels and get label references
-    input_image_label, outputImageLabel = setup_image_labels(input_image_frame, output_image_frame, input_image_data, output_image_data)
+    input_image_label, output_image_label = setup_image_labels(input_image_frame, output_image_frame, input_image_data, output_image_data)
 
     #setup command interface
-    command_entry = setup_command_interface(command_frame, input_image_data, treeView, rootIID, outputImageLabel)
+    command_entry = setup_command_interface(command_frame, input_image_data, treeView, rootIID, output_image_label)
 
     #bind event handlers to widgets
-    bind_events(treeView, input_image_label, outputImageLabel, input_image_data, output_image_data)
+    bind_events(treeView, input_image_label, output_image_label, input_image_data, output_image_data)
 
     #setup window resize monitoring
-    setup_window_resize_monitor(root, input_image_label, outputImageLabel)
+    setup_window_resize_monitor(root, input_image_label, output_image_label)
 
     root.mainloop()
     gc.collect()
