@@ -2,6 +2,24 @@ import os
 from PIL import Image, ImageTk
 from image_ops import create_negative_image
 
+def get_ppm_maxvalue(filename):
+    with open(filename, "rb") as f:
+        header = f.readline().strip()
+        if header not in [b"P3", b"P6"]:
+            raise ValueError("Not a valid PPM file")
+
+        line = f.readline().strip()
+        while line.startswith(b"#"):
+            line = f.readline().strip()
+
+        parts = line.split()
+        if len(parts) < 2:
+            parts += f.readline().split()
+        width, height = map(int, parts)
+
+        maxval = int(f.readline().strip())
+        return maxval
+
 def load_default_images(treeView, rootIID):
     imageData = {}
     filenameList = ['data/cameraman.ppm', 'data/butterfly-16.ppm', 'data/apple-20.ppm']
@@ -10,10 +28,12 @@ def load_default_images(treeView, rootIID):
         pil_image = Image.open(filename)
         tk_image = ImageTk.PhotoImage(pil_image)
         name = os.path.basename(filename)
+        maxval = get_ppm_maxvalue(filename)
 
         imageData[name] = {
             "pil": pil_image,
-            "tk": tk_image
+            "tk": tk_image,
+            "maxval": maxval,
         }
 
         treeView.insert(rootIID, -1, text=name)
@@ -32,6 +52,7 @@ def copy_images(imageData, treeView, rootIID):
         newImageData[name] = {
             "pil": pil_copy,
             "tk": tk_copy,
+            "maxval": imgDict["maxval"],
         }
 
         treeView.insert(rootIID, -1, text=name)
@@ -43,12 +64,14 @@ def load_negative_images(imageData):
 
     for name, imgDict in imageData.items():
         orig_pil = imgDict["pil"]
-        neg_pil = create_negative_image(orig_pil)
+        maxval = imgDict.get("maxval", 255)
+        neg_pil = create_negative_image(orig_pil, maxval)
         neg_tk = ImageTk.PhotoImage(neg_pil)
 
         negImageData[name] = {
             "pil": neg_pil,
             "tk": neg_tk,
+            "maxval": imgDict["maxval"],
         }
 
     return negImageData

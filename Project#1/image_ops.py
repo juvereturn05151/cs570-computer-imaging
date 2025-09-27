@@ -2,7 +2,7 @@ from PIL import Image, ImageTk, ImageOps
 import math
 
 # receive Pil image, and return a PIL image
-def create_negative_image(pil_image):
+def create_negative_image(pil_image, maxval=255 ):
     # check if it is a pil_image
     if not isinstance(pil_image, Image.Image):
         raise ValueError("Input must be a PIL Image object")
@@ -15,7 +15,7 @@ def create_negative_image(pil_image):
     for y in range(height):
         for x in range(width):
             r, g, b = image_data[x, y]
-            neg_data[x, y] = (255 - r, 255 - g, 255 - b)
+            neg_data[x, y] = (maxval - r, maxval - g, maxval - b)
     return negative_image
 
 def nearest_neighbor(pil_image, new_width, new_height):
