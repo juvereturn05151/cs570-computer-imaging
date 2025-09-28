@@ -1,6 +1,6 @@
 import tkinter as tk
 import gc
-from gui_setup import setup_frames, setup_treeview, setup_image_labels, setup_command_interface
+from gui_setup import setup_frames, setup_treeview, setup_image_labels, setup_command_interface, setup_interpolation_options
 from image_data import load_default_images, load_negative_images, copy_images
 from events import bind_events, setup_window_resize_monitor, bind_events2
 
@@ -26,13 +26,15 @@ def main():
     #setup command interface
     command_entry = setup_command_interface(command_frame, input_image_data, treeView, rootIID, output_image_label)
 
+    # setup interpolation options
+    interpolation_var = setup_interpolation_options(command_frame)
     #bind event handlers to widgets
     bind_events(treeView, input_image_label, output_image_label, input_image_data, output_image_data)
 
     bind_events2(treeView2, input_image_label2, input_image_data2)
 
     #setup window resize monitoring
-    setup_window_resize_monitor(root, input_image_label, input_image_label2, output_image_label)
+    setup_window_resize_monitor(root, interpolation_var, input_image_label, input_image_label2, output_image_label)
 
     root.mainloop()
     gc.collect()

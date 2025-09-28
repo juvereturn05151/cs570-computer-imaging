@@ -87,3 +87,21 @@ def setup_command_interface(commandFrame, input_image_data, treeView, rootIID, o
     command_entry.bind("<Return>",
                        lambda e: execute_command(e, command_entry, input_image_data, treeView, rootIID, outputImageLabel))
     return command_entry
+
+def setup_interpolation_options(command_frame):
+    interpolation_var = tk.StringVar(value="nearest")
+
+    interp_frame = tk.Frame(command_frame)
+    interp_frame.pack(side=tk.LEFT, padx=10, pady=5)
+
+    tk.Label(interp_frame, text="Interpolation:").pack(anchor="w")
+
+    tk.Radiobutton(
+        interp_frame, text="Nearest Neighbor", variable=interpolation_var, value="nearest"
+    ).pack(anchor="w")
+
+    tk.Radiobutton(
+        interp_frame, text="Bilinear", variable=interpolation_var, value="bilinear"
+    ).pack(anchor="w")
+
+    return interpolation_var
