@@ -7,64 +7,35 @@ def bind_events(treeView, imageLabel, outputImageLabel, input_image_data, output
     treeView.bind('<<TreeviewSelect>>',
                   lambda e: on_tree_select(e, treeView, imageLabel, outputImageLabel, input_image_data, output_image_frame))
 
+
 def bind_events2(treeView, imageLabel, input_image_data):
     treeView.bind('<<TreeviewSelect>>',
                   lambda e: on_tree_select2(e, treeView, imageLabel, input_image_data))
 
-def setup_window_resize_monitor(root, interpolation_var,inputLabel, inputLabel2, outputImageLabel):
-    """Setup event handler to monitor window resize and print image sizes"""
+
+def setup_window_resize_monitor(root, interpolation_var, inputLabel, inputLabel2, outputImageLabel):
+    """Setup event handler to monitor window resize and update images."""
+
+    def resize_label_image(label, width, height, method):
+        """Helper to resize and update a single label image."""
+        if hasattr(label, "pil_image") and label.pil_image is not None:
+            if method == "nearest":
+                resized_pil_image = nearest_neighbor(label.original_pil, width, height)
+            else:
+                resized_pil_image = billinear_interpolation(label.original_pil, width, height)
+
+            label.pil_image = resized_pil_image
+            label.tk_image = ImageTk.PhotoImage(resized_pil_image)
+            label.configure(image=label.tk_image)
+
     def on_window_resize(event):
-
-        print("interpolation_var: ", interpolation_var.get());
-
-        """Event handler called when window is resized"""
-        # Get the current size of the input image label
-        input_label_width = inputLabel.winfo_width()
-        input_label_height = inputLabel.winfo_height()
-
-        input_label_width2 = inputLabel2.winfo_width()
-        input_label_height2 = inputLabel2.winfo_height()
-
-        # Get the current size of the output image label
-        output_label_width = outputImageLabel.winfo_width()
-        output_label_height = outputImageLabel.winfo_height()
-
         method = interpolation_var.get()
+        print("interpolation_var:", method)
 
-        if hasattr(inputLabel, "pil_image") and inputLabel.pil_image is not None:
-
-            if method == "nearest":
-                resized_pil_image = nearest_neighbor(inputLabel.original_pil, input_label_width, input_label_height)
-            else:
-                resized_pil_image = billinear_interpolation(inputLabel.original_pil, input_label_width, input_label_height)
-
-            inputLabel.pil_image = resized_pil_image
-            inputLabel.tk_image = ImageTk.PhotoImage(resized_pil_image)
-
-            inputLabel.configure(image=inputLabel.tk_image)
-
-        if hasattr(inputLabel2, "pil_image") and inputLabel2.pil_image is not None:
-            if method == "nearest":
-                resized_pil_image = nearest_neighbor(inputLabel2.original_pil, input_label_width2, input_label_height2)
-            else:
-                resized_pil_image = billinear_interpolation(inputLabel2.original_pil, input_label_width2, input_label_height2)
-
-
-            inputLabel2.pil_image = resized_pil_image
-            inputLabel2.tk_image = ImageTk.PhotoImage(resized_pil_image)
-
-            inputLabel2.configure(image=inputLabel2.tk_image)
-
-        if hasattr(outputImageLabel, "pil_image") and outputImageLabel.pil_image is not None:
-            if method == "nearest":
-                resized_pil_image = nearest_neighbor(outputImageLabel.original_pil, output_label_width, output_label_height)
-            else:
-                resized_pil_image = billinear_interpolation(outputImageLabel.original_pil, output_label_width, output_label_height)
-
-            outputImageLabel.pil_image = resized_pil_image
-            outputImageLabel.tk_image = ImageTk.PhotoImage(resized_pil_image)
-
-            outputImageLabel.config(image=outputImageLabel.tk_image)
+        # Resize each label
+        resize_label_image(inputLabel, inputLabel.winfo_width(), inputLabel.winfo_height(), method)
+        resize_label_image(inputLabel2, inputLabel2.winfo_width(), inputLabel2.winfo_height(), method)
+        resize_label_image(outputImageLabel, outputImageLabel.winfo_width(), outputImageLabel.winfo_height(), method)
 
     # Bind the resize event handler
     root.bind('<Configure>', on_window_resize)
