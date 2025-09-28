@@ -30,7 +30,6 @@ def setup_window_resize_monitor(root, interpolation_var, inputLabel, inputLabel2
 
     def on_window_resize(event):
         method = interpolation_var.get()
-        print("interpolation_var:", method)
 
         # Resize each label
         resize_label_image(inputLabel, inputLabel.winfo_width(), inputLabel.winfo_height(), method)

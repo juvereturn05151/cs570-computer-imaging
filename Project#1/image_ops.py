@@ -74,6 +74,27 @@ def log_transform(pil_image, c=1.0):
     return Image.fromarray(result)
 
 
+def power_transform(pil_image, gamma=1.0, c=1.0):
+    """Apply power (gamma) transformation with parameters gamma and c"""
+    if not isinstance(pil_image, Image.Image):
+        raise ValueError("Input must be a PIL Image object")
+
+    # Convert to numpy array and normalize to [0, 1]
+    arr = np.array(pil_image, dtype=np.float32) / 255.0
+
+    # Apply power transformation: s = c * r^gamma
+    power_arr = c * np.power(arr, gamma)
+
+    # Normalize back to [0, 255] for faithful display
+    max_val = np.max(power_arr)
+    if max_val > 0:
+        power_arr = (power_arr / max_val) * 255
+    else:
+        power_arr = power_arr * 255
+
+    result = np.clip(power_arr, 0, 255).astype(np.uint8)
+    return Image.fromarray(result)
+
 def connected_topology_4(pil_image):
     """4-connected topology edge detection"""
     if pil_image.mode != 'L':

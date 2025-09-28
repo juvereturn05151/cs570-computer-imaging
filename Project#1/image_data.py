@@ -75,3 +75,9 @@ def load_negative_images(imageData):
         }
 
     return negImageData
+
+def update_output_image(outputLabel, pil_image):
+    outputLabel.original_pil = pil_image
+    outputLabel.pil_image = pil_image
+    outputLabel.tk_image = ImageTk.PhotoImage(pil_image)
+    outputLabel.configure(image=outputLabel.tk_image)
