@@ -1,6 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
 from commands import execute_command
+from image_ops import (
+    create_negative_image, add_images, subtract_images, multiply_images,
+    log_transform, connected_topology_4, connected_topology_8, connected_topology_m
+)
 
 def setup_frames(root):
     """Create and organize all frames in the main window"""
@@ -105,3 +109,35 @@ def setup_interpolation_options(command_frame):
     ).pack(anchor="w")
 
     return interpolation_var
+
+def setup_operations_panel(command_frame, input_image_data, input_image_data2, output_image_data,
+                           inputLabel, inputLabel2, outputImageLabel):
+    """Setup operation buttons for image processing tasks."""
+
+    ops_frame = tk.Frame(command_frame)
+    ops_frame.pack(side=tk.LEFT, padx=10, pady=5)
+
+    tk.Label(ops_frame, text="Operations:").pack(anchor="w")
+
+    # Row 1: pixel arithmetic
+    tk.Button(ops_frame, text="Negative",
+              command=lambda: create_negative_image(inputLabel, outputImageLabel)).pack(fill="x")
+    tk.Button(ops_frame, text="Addition",
+              command=lambda: add_images(inputLabel, inputLabel2, outputImageLabel)).pack(fill="x")
+    tk.Button(ops_frame, text="Subtraction",
+              command=lambda: subtract_images(inputLabel, inputLabel2, outputImageLabel)).pack(fill="x")
+    tk.Button(ops_frame, text="Product",
+              command=lambda: multiply_images(inputLabel, inputLabel2, outputImageLabel)).pack(fill="x")
+    tk.Button(ops_frame, text="Log Transform",
+              command=lambda: log_transform(inputLabel, outputImageLabel)).pack(fill="x")
+
+    # Row 2: topology operations
+    tk.Label(ops_frame, text="Topology:").pack(anchor="w", pady=(10, 0))
+    tk.Button(ops_frame, text="4-Connected",
+              command=lambda: connected_topology_4(inputLabel, outputImageLabel)).pack(fill="x")
+    tk.Button(ops_frame, text="8-Connected",
+              command=lambda: connected_topology_8(inputLabel, outputImageLabel)).pack(fill="x")
+    tk.Button(ops_frame, text="M-Connected",
+              command=lambda: connected_topology_m(inputLabel, outputImageLabel)).pack(fill="x")
+
+    return ops_frame

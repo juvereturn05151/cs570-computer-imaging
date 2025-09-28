@@ -1,5 +1,6 @@
 from PIL import Image, ImageTk, ImageOps
 import math
+import numpy as np
 
 # receive Pil image, and return a PIL image
 def create_negative_image(pil_image, maxval=255 ):
@@ -17,6 +18,139 @@ def create_negative_image(pil_image, maxval=255 ):
             r, g, b = image_data[x, y]
             neg_data[x, y] = (maxval - r, maxval - g, maxval - b)
     return negative_image
+
+
+def add_images(pil_image1, pil_image2):
+    """Add two images with saturation"""
+    # Ensure same size
+    if pil_image1.size != pil_image2.size:
+        pil_image2 = pil_image2.resize(pil_image1.size)
+
+    # Convert to numpy for efficient computation
+    arr1 = np.array(pil_image1, dtype=np.int16)
+    arr2 = np.array(pil_image2, dtype=np.int16)
+
+    # Add with saturation
+    result = np.clip(arr1 + arr2, 0, 255).astype(np.uint8)
+
+    return Image.fromarray(result)
+
+
+def subtract_images(pil_image1, pil_image2):
+    """Subtract image2 from image1 with saturation"""
+    if pil_image1.size != pil_image2.size:
+        pil_image2 = pil_image2.resize(pil_image1.size)
+
+    arr1 = np.array(pil_image1, dtype=np.int16)
+    arr2 = np.array(pil_image2, dtype=np.int16)
+
+    result = np.clip(arr1 - arr2, 0, 255).astype(np.uint8)
+
+    return Image.fromarray(result)
+
+
+def multiply_images(pil_image1, pil_image2):
+    """Multiply two images (element-wise)"""
+    if pil_image1.size != pil_image2.size:
+        pil_image2 = pil_image2.resize(pil_image1.size)
+
+    arr1 = np.array(pil_image1, dtype=np.float32) / 255.0
+    arr2 = np.array(pil_image2, dtype=np.float32) / 255.0
+
+    result = np.clip((arr1 * arr2) * 255, 0, 255).astype(np.uint8)
+
+    return Image.fromarray(result)
+
+
+def log_transform(pil_image, c=1.0):
+    """Apply logarithmic transformation"""
+    arr = np.array(pil_image, dtype=np.float32) / 255.0
+
+    # Avoid log(0) by adding small epsilon
+    log_arr = c * np.log(1.0 + arr)
+
+    result = np.clip(log_arr * 255, 0, 255).astype(np.uint8)
+
+    return Image.fromarray(result)
+
+
+def connected_topology_4(pil_image):
+    """4-connected topology edge detection"""
+    if pil_image.mode != 'L':
+        gray_image = pil_image.convert('L')
+    else:
+        gray_image = pil_image
+
+    arr = np.array(gray_image, dtype=np.float32)
+
+    # 4-connected Laplacian kernel
+    kernel = np.array([[0, -1, 0],
+                       [-1, 4, -1],
+                       [0, -1, 0]])
+
+    # Manual convolution for 4-connected
+    height, width = arr.shape
+    result = np.zeros_like(arr)
+
+    for y in range(1, height - 1):
+        for x in range(1, width - 1):
+            neighborhood = arr[y - 1:y + 2, x - 1:x + 2]
+            result[y, x] = np.sum(neighborhood * kernel)
+
+    result = np.clip(np.abs(result), 0, 255).astype(np.uint8)
+    return Image.fromarray(result)
+
+
+def connected_topology_8(pil_image):
+    """8-connected topology edge detection"""
+    if pil_image.mode != 'L':
+        gray_image = pil_image.convert('L')
+    else:
+        gray_image = pil_image
+
+    arr = np.array(gray_image, dtype=np.float32)
+
+    # 8-connected Laplacian kernel
+    kernel = np.array([[-1, -1, -1],
+                       [-1, 8, -1],
+                       [-1, -1, -1]])
+
+    height, width = arr.shape
+    result = np.zeros_like(arr)
+
+    for y in range(1, height - 1):
+        for x in range(1, width - 1):
+            neighborhood = arr[y - 1:y + 2, x - 1:x + 2]
+            result[y, x] = np.sum(neighborhood * kernel)
+
+    result = np.clip(np.abs(result), 0, 255).astype(np.uint8)
+    return Image.fromarray(result)
+
+
+def connected_topology_m(pil_image):
+    """M-connected topology (mixed connectivity)"""
+    if pil_image.mode != 'L':
+        gray_image = pil_image.convert('L')
+    else:
+        gray_image = pil_image
+
+    arr = np.array(gray_image, dtype=np.float32)
+
+    # M-connected combines diagonal and direct neighbors with different weights
+    kernel = np.array([[-0.7, -1, -0.7],
+                       [-1, 6, -1],
+                       [-0.7, -1, -0.7]])
+
+    height, width = arr.shape
+    result = np.zeros_like(arr)
+
+    for y in range(1, height - 1):
+        for x in range(1, width - 1):
+            neighborhood = arr[y - 1:y + 2, x - 1:x + 2]
+            result[y, x] = np.sum(neighborhood * kernel)
+
+    result = np.clip(np.abs(result), 0, 255).astype(np.uint8)
+    return Image.fromarray(result)
 
 def nearest_neighbor(pil_image, new_width, new_height):
     original_width, original_height = pil_image.size
