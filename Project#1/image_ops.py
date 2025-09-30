@@ -21,16 +21,14 @@ def create_negative_image(inputLabel):
     return negative_image
 
 
-def add_images(inputLabel1, inputLabel2):
+def add_images(inputImage, inputImage2, maxval):
     #ensure same size
-    if inputLabel1.pil_image.size != inputLabel2.pil_image.size:
-        inputLabel2.pil_image = inputLabel2.pil_image.resize(inputLabel1.pil_image.size)
-
-    maxval = getattr(inputLabel1, "maxval", 255)
+    if inputImage.size != inputImage2.size:
+        inputImage2 = inputImage2.resize(inputImage.size)
 
     # Convert image to numpy array
-    arr1 = np.array(inputLabel1.pil_image, dtype=np.int16)
-    arr2 = np.array(inputLabel2.pil_image, dtype=np.int16)
+    arr1 = np.array(inputImage, dtype=np.int16)
+    arr2 = np.array(inputImage2, dtype=np.int16)
 
     # Add them up, then convert back to 8-bit
     result = np.clip(arr1 + arr2, 0, maxval).astype(np.uint8)

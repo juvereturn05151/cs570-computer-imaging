@@ -173,9 +173,11 @@ def setup_operations_panel(command_frame, inputLabel, inputLabel2, outputImageLa
         except ValueError:
             print("Invalid parameter values. Please enter numbers.")
 
+    maxval = getattr(inputLabel, "maxval", 255)
+
     tk.Button(ops_frame, text="Negative", command=lambda: update_output_image(outputImageLabel, create_negative_image(inputLabel))).pack(fill="x")
 
-    tk.Button(ops_frame, text="Addition", command=lambda: update_output_image(outputImageLabel, add_images(inputLabel, inputLabel2))).pack(fill="x")
+    tk.Button(ops_frame, text="Addition", command=lambda: update_output_image(outputImageLabel, add_images(inputLabel.pil_image, inputLabel2.pil_image, maxval))).pack(fill="x")
 
     tk.Button(ops_frame, text="Subtraction", command=lambda: update_output_image(outputImageLabel,subtract_images(inputLabel, inputLabel2))).pack(fill="x")
 

@@ -36,7 +36,7 @@ def load_image(loadFilename, imageData, treeView=None, rootIID=None):
     import os
     from PIL import Image, ImageTk
 
-    pil_image = Image.open('data/' + loadFilename)
+    pil_image = Image.open( loadFilename)
     tk_image = ImageTk.PhotoImage(pil_image)
     name = os.path.basename(loadFilename)
 
