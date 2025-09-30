@@ -95,19 +95,19 @@ def execute_command(event=None, command_entry=None,
     if op == "add":
         result = add_images(input_pils[0], input_pils[1], maxval)
     elif op == "sub":
-        result = subtract_images(input_pils[0], input_pils[1])
+        result = subtract_images(input_pils[0], input_pils[1], maxval)
     elif op == "mul":
-        result = multiply_images(input_pils[0], input_pils[1])
+        result = multiply_images(input_pils[0], input_pils[1], maxval)
     elif op == "inv":
-        result = create_negative_image(input_pils[0])
+        result = create_negative_image(input_pils[0], maxval)
     elif op == "log":
         c_val = float(parse_command_args(tokens, "-c") or 1.0)
         base_val = float(parse_command_args(tokens, "-b") or 10.0)
-        result = log_transform(input_pils[0], c=c_val, base=base_val)
+        result = log_transform(input_pils[0], maxval, c=c_val, base=base_val)
     elif op == "pow":
         c_val = float(parse_command_args(tokens, "-c") or 1.0)
         gamma_val = float(parse_command_args(tokens, "-gamma") or 1.0)
-        result = power_transform(input_pils[0], gamma=gamma_val, c=c_val)
+        result = power_transform(input_pils[0], maxval, gamma=gamma_val, c=c_val)
     else:
         print(f"Unknown operation: {op}")
         return

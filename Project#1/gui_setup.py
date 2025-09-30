@@ -175,18 +175,18 @@ def setup_operations_panel(command_frame, inputLabel, inputLabel2, outputImageLa
 
     maxval = getattr(inputLabel, "maxval", 255)
 
-    tk.Button(ops_frame, text="Negative", command=lambda: update_output_image(outputImageLabel, create_negative_image(inputLabel))).pack(fill="x")
+    tk.Button(ops_frame, text="Negative", command=lambda: update_output_image(outputImageLabel, create_negative_image(inputLabel.pil_image, maxval))).pack(fill="x")
 
     tk.Button(ops_frame, text="Addition", command=lambda: update_output_image(outputImageLabel, add_images(inputLabel.pil_image, inputLabel2.pil_image, maxval))).pack(fill="x")
 
-    tk.Button(ops_frame, text="Subtraction", command=lambda: update_output_image(outputImageLabel,subtract_images(inputLabel, inputLabel2))).pack(fill="x")
+    tk.Button(ops_frame, text="Subtraction", command=lambda: update_output_image(outputImageLabel,subtract_images(inputLabel.pil_image, inputLabel2.pil_image, maxval))).pack(fill="x")
 
-    tk.Button(ops_frame, text="Product", command=lambda: update_output_image(outputImageLabel,multiply_images(inputLabel, inputLabel2))).pack(fill="x")
+    tk.Button(ops_frame, text="Product", command=lambda: update_output_image(outputImageLabel,multiply_images(inputLabel.pil_image, inputLabel2.pil_image, maxval))).pack(fill="x")
 
     def execute_log_transform():
         try:
             c_value = current_c.get()
-            result = log_transform(inputLabel, c_value)
+            result = log_transform(inputLabel.pil_image, maxval, c_value)
             update_output_image(outputImageLabel, result)
             print(f"Applied Log Transform with c={c_value}")
         except Exception as e:
@@ -199,7 +199,7 @@ def setup_operations_panel(command_frame, inputLabel, inputLabel2, outputImageLa
         try:
             c_value = current_c.get()
             gamma_value = current_gamma.get()
-            result = power_transform(inputLabel, gamma_value, c_value)
+            result = power_transform(inputLabel.pil_image, maxval, gamma_value, c_value)
             update_output_image(outputImageLabel, result)
             print(f"Applied Power Transform with γ={gamma_value}, c={c_value}")
         except Exception as e:

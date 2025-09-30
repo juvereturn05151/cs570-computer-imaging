@@ -3,15 +3,14 @@ import math
 import numpy as np
 from collections import deque
 
-def create_negative_image(inputLabel):
+def create_negative_image(inputImage, maxval):
     # check if it is a pil_image
-    if not isinstance(inputLabel.pil_image, Image.Image):
+    if not isinstance(inputImage, Image.Image):
         raise ValueError("Input must be a PIL Image object")
 
-    maxval = getattr(inputLabel, "maxval",255)
-    image_data = inputLabel.pil_image.load()
-    width, height = inputLabel.pil_image.size
-    negative_image = Image.new(inputLabel.pil_image.mode, (width, height))
+    image_data = inputImage.load()
+    width, height = inputImage.size
+    negative_image = Image.new(inputImage.mode, (width, height))
     neg_data = negative_image.load()
 
     for y in range(height):
@@ -36,38 +35,32 @@ def add_images(inputImage, inputImage2, maxval):
     return Image.fromarray(result)
 
 
-def subtract_images(inputLabel1, inputLabel2):
-    if inputLabel1.pil_image.size != inputLabel2.pil_image.size:
-        inputLabel2.pil_image = inputLabel2.pil_image.resize(inputLabel1.pil_image.size)
+def subtract_images(inputImage1, inputImage2, maxval):
+    if inputImage1.size != inputImage2.size:
+        inputImage2 = inputImage2.resize(inputImage1.size)
 
-    maxval = getattr(inputLabel1, "maxval", 255)
-
-    arr1 = np.array(inputLabel1.pil_image, dtype=np.int16)
-    arr2 = np.array(inputLabel2.pil_image, dtype=np.int16)
+    arr1 = np.array(inputImage1, dtype=np.int16)
+    arr2 = np.array(inputImage2, dtype=np.int16)
 
     result = np.clip(arr1 - arr2, 0, maxval).astype(np.uint8)
 
     return Image.fromarray(result)
 
 
-def multiply_images(inputLabel1, inputLabel2):
-    if inputLabel1.pil_image.size != inputLabel2.pil_image.size:
-        inputLabel2.pil_image = inputLabel2.pil_image.resize(inputLabel1.pil_image.size)
+def multiply_images(inputImage1, inputImage2, maxval):
+    if inputImage1.size != inputImage2.size:
+        inputImage2 = inputImage2.resize(inputImage1.size)
 
-    maxval = getattr(inputLabel1, "maxval", 255)
-
-    arr1 = np.array(inputLabel1.pil_image, dtype=np.float32) / maxval
-    arr2 = np.array(inputLabel2.pil_image, dtype=np.float32) / maxval
+    arr1 = np.array(inputImage1, dtype=np.float32) / maxval
+    arr2 = np.array(inputImage2, dtype=np.float32) / maxval
 
     result = np.clip((arr1 * arr2) * maxval, 0, maxval).astype(np.uint8)
 
     return Image.fromarray(result)
 
 
-def log_transform(inputLabel, c=1.0):
-    maxval = getattr(inputLabel, "maxval", 255)
-
-    arr = np.array(inputLabel.pil_image, dtype=np.float32) / maxval
+def log_transform(inputImage, maxval, c=1.0):
+    arr = np.array(inputImage, dtype=np.float32) / maxval
 
     log_arr = c * np.log(1.0 + arr)
 
@@ -76,10 +69,9 @@ def log_transform(inputLabel, c=1.0):
     return Image.fromarray(result)
 
 
-def power_transform(inputLabel, gamma=1.0, c=1.0):
-    maxval = getattr(inputLabel, "maxval", 255)
+def power_transform(inputImage, maxval,gamma=1.0, c=1.0):
 
-    arr = np.array(inputLabel.pil_image, dtype=np.float32) / maxval
+    arr = np.array(inputImage, dtype=np.float32) / maxval
 
     power_arr = c * np.power(arr, gamma)
 
