@@ -1,8 +1,15 @@
 import tkinter as tk
 import gc
+import os
 from gui_setup import setup_frames, setup_treeview, setup_image_labels, setup_command_interface, setup_interpolation_options, setup_operations_panel
 from image_data import load_default_images, load_negative_images, copy_images
 from events import bind_events, setup_window_resize_monitor, bind_events2
+
+ORIGIN_PATH = os.path.join(os.getcwd(), "data")
+
+if not os.path.exists(ORIGIN_PATH):
+    os.makedirs(ORIGIN_PATH)
+os.chdir(ORIGIN_PATH)
 
 def main():
     root = tk.Tk()
@@ -24,7 +31,7 @@ def main():
     input_image_label, input_image_label2, output_image_label = setup_image_labels(input_image_frame, input_image_frame2, output_image_frame, input_image_data, input_image_data2, output_image_data)
 
     #setup command interface
-    command_entry = setup_command_interface(command_frame, input_image_data, treeView, rootIID, output_image_label)
+    command_entry, path_label = setup_command_interface(command_frame, input_image_data, treeView, rootIID, output_image_label)
 
     setup_operations_panel(command_frame, input_image_label, input_image_label2, output_image_label)
 

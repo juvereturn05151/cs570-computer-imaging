@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from commands import execute_command
+import os
 from image_ops import (
     create_negative_image, add_images, subtract_images, multiply_images,
     log_transform, power_transform, connected_component_labeling, connected_component_labeling_m
@@ -83,15 +84,34 @@ def setup_image_labels(input_image_frame, input_image_frame2, output_image_frame
 
     return inputLabel, inputLabel2, outputLabel
 
+
 def setup_command_interface(commandFrame, input_image_data, treeView, rootIID, outputImageLabel):
+    """
+    Sets up the command interface with:
+    1. A label showing the current working path.
+    2. An entry for user commands.
+    """
+
+    # 1️⃣ Show current path at the top
+    current_path = os.getcwd()
+    path_label = tk.Label(commandFrame, text=f"Current Path: {current_path}", anchor="w", fg="blue")
+    path_label.pack(side=tk.TOP, fill=tk.X, padx=5, pady=2)
+
+    # 2️⃣ Command label
     commandLabel = tk.Label(commandFrame, text="Execute command:")
     commandLabel.pack(side=tk.LEFT, padx=5, pady=5)
 
+    # 3️⃣ Command entry
     command_entry = ttk.Entry(commandFrame)
     command_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5, pady=5)
-    command_entry.bind("<Return>",
-                       lambda e: execute_command(e, command_entry, input_image_data, treeView, rootIID, outputImageLabel))
-    return command_entry
+
+    # Bind Enter key to execute command
+    command_entry.bind(
+        "<Return>",
+        lambda e: execute_command(e, command_entry, input_image_data, treeView, rootIID, outputImageLabel)
+    )
+
+    return command_entry, path_label
 
 def setup_interpolation_options(command_frame):
     interpolation_var = tk.StringVar(value="nearest")
