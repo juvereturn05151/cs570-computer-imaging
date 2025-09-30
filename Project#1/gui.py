@@ -70,7 +70,7 @@ def save_output_image(fileName, outputImageLabel):
             fileName += '.ppm'
             print(f"Added .ppm extension. Saving as: {fileName}")
 
-        outputImageLabel.pil_image.save('data/' + fileName)
+        outputImageLabel.pil_image.save(fileName)
         print(f"Image saved to save_images/{fileName}")
     else:
         print("No output image to save")

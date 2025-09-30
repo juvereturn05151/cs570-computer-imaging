@@ -108,7 +108,7 @@ def setup_command_interface(commandFrame, input_image_data, treeView, rootIID, o
     # Bind Enter key to execute command
     command_entry.bind(
         "<Return>",
-        lambda e: execute_command(e, command_entry, input_image_data, treeView, rootIID, outputImageLabel)
+        lambda e: execute_command(e, command_entry, input_image_data, treeView, rootIID, outputImageLabel, path_label)
     )
 
     return command_entry, path_label
