@@ -3,7 +3,7 @@ from tkinter import ttk
 from commands import execute_command
 from image_ops import (
     create_negative_image, add_images, subtract_images, multiply_images,
-    log_transform, power_transform, connected_topology_4, connected_topology_8, connected_topology_m
+    log_transform, power_transform, connected_component_labeling, connected_component_labeling_m
 )
 from image_data import update_output_image
 
@@ -112,9 +112,7 @@ def setup_interpolation_options(command_frame):
     return interpolation_var
 
 
-def setup_operations_panel(command_frame, input_image_data, input_image_data2, output_image_data,
-                           inputLabel, inputLabel2, outputImageLabel):
-    """Setup operation buttons for image processing tasks with parameter inputs."""
+def setup_operations_panel(command_frame, inputLabel, inputLabel2, outputImageLabel):
 
     ops_frame = tk.Frame(command_frame)
     ops_frame.pack(side=tk.LEFT, padx=10, pady=5)
@@ -138,9 +136,7 @@ def setup_operations_panel(command_frame, input_image_data, input_image_data2, o
     gamma_entry = ttk.Entry(param_frame, textvariable=gamma_var, width=6)
     gamma_entry.pack(side=tk.LEFT, padx=2)
 
-    # Update parameter button
-    update_param_btn = tk.Button(param_frame, text="Update Params",
-                                 command=lambda: update_parameters(c_var, gamma_var))
+    update_param_btn = tk.Button(param_frame, text="Update Params", command=lambda: update_parameters(c_var, gamma_var))
     update_param_btn.pack(side=tk.LEFT, padx=5)
 
     # Store current parameters for operations
@@ -148,7 +144,6 @@ def setup_operations_panel(command_frame, input_image_data, input_image_data2, o
     current_gamma = tk.DoubleVar(value=1.0)
 
     def update_parameters(c_var, gamma_var):
-        """Update the current parameter values"""
         try:
             c_value = float(c_var.get())
             gamma_value = float(gamma_var.get())
@@ -158,53 +153,37 @@ def setup_operations_panel(command_frame, input_image_data, input_image_data2, o
         except ValueError:
             print("Invalid parameter values. Please enter numbers.")
 
-    # Row 1: pixel arithmetic
-    tk.Button(ops_frame, text="Negative",
-              command=lambda: update_output_image(outputImageLabel, create_negative_image(inputLabel.pil_image,
-                                                                                          getattr(inputLabel, "maxval",
-                                                                                                  255)))).pack(fill="x")
+    tk.Button(ops_frame, text="Negative", command=lambda: update_output_image(outputImageLabel, create_negative_image(inputLabel))).pack(fill="x")
 
-    tk.Button(ops_frame, text="Addition",
-              command=lambda: update_output_image(outputImageLabel,
-                                                  add_images(inputLabel.pil_image, inputLabel2.pil_image))).pack(
-        fill="x")
+    tk.Button(ops_frame, text="Addition", command=lambda: update_output_image(outputImageLabel, add_images(inputLabel, inputLabel2))).pack(fill="x")
 
-    tk.Button(ops_frame, text="Subtraction",
-              command=lambda: update_output_image(outputImageLabel,
-                                                  subtract_images(inputLabel.pil_image, inputLabel2.pil_image))).pack(
-        fill="x")
+    tk.Button(ops_frame, text="Subtraction", command=lambda: update_output_image(outputImageLabel,subtract_images(inputLabel, inputLabel2))).pack(fill="x")
 
-    tk.Button(ops_frame, text="Product",
-              command=lambda: update_output_image(outputImageLabel,
-                                                  multiply_images(inputLabel.pil_image, inputLabel2.pil_image))).pack(
-        fill="x")
+    tk.Button(ops_frame, text="Product", command=lambda: update_output_image(outputImageLabel,multiply_images(inputLabel, inputLabel2))).pack(fill="x")
 
-    # Log Transform with parameter
     def execute_log_transform():
         try:
             c_value = current_c.get()
-            result = log_transform(inputLabel.pil_image, c_value)
+            result = log_transform(inputLabel, c_value)
             update_output_image(outputImageLabel, result)
             print(f"Applied Log Transform with c={c_value}")
         except Exception as e:
             print(f"Error in Log Transform: {e}")
 
-    tk.Button(ops_frame, text="Log Transform",
-              command=execute_log_transform).pack(fill="x")
+    tk.Button(ops_frame, text="Log Transform", command=execute_log_transform).pack(fill="x")
 
     # Power Transform with parameters
     def execute_power_transform():
         try:
             c_value = current_c.get()
             gamma_value = current_gamma.get()
-            result = power_transform(inputLabel.pil_image, gamma_value, c_value)
+            result = power_transform(inputLabel, gamma_value, c_value)
             update_output_image(outputImageLabel, result)
             print(f"Applied Power Transform with γ={gamma_value}, c={c_value}")
         except Exception as e:
             print(f"Error in Power Transform: {e}")
 
-    tk.Button(ops_frame, text="Power Transform",
-              command=execute_power_transform).pack(fill="x")
+    tk.Button(ops_frame, text="Power Transform", command=execute_power_transform).pack(fill="x")
 
     # Row 2: topology operations
     topology_frame = tk.Frame(ops_frame)
@@ -216,15 +195,15 @@ def setup_operations_panel(command_frame, input_image_data, input_image_data2, o
     topology_btn_frame.pack(fill="x")
 
     tk.Button(topology_btn_frame, text="4-Connected",
-              command=lambda: update_output_image(outputImageLabel, connected_topology_4(inputLabel.pil_image))).pack(
+              command=lambda: update_output_image(outputImageLabel, connected_component_labeling(inputLabel, 4))).pack(
         side=tk.LEFT, fill="x", expand=True, padx=2)
 
     tk.Button(topology_btn_frame, text="8-Connected",
-              command=lambda: update_output_image(outputImageLabel, connected_topology_8(inputLabel.pil_image))).pack(
+              command=lambda: update_output_image(outputImageLabel, connected_component_labeling(inputLabel, 8))).pack(
         side=tk.LEFT, fill="x", expand=True, padx=2)
 
     tk.Button(topology_btn_frame, text="M-Connected",
-              command=lambda: update_output_image(outputImageLabel, connected_topology_m(inputLabel.pil_image))).pack(
+              command=lambda: update_output_image(outputImageLabel, connected_component_labeling_m(inputLabel))).pack(
         side=tk.LEFT, fill="x", expand=True, padx=2)
 
     # Add tooltips or information labels

@@ -1,16 +1,17 @@
 from PIL import Image, ImageTk, ImageOps
 import math
 import numpy as np
+from collections import deque
 
-# receive Pil image, and return a PIL image
-def create_negative_image(pil_image, maxval=255 ):
+def create_negative_image(inputLabel):
     # check if it is a pil_image
-    if not isinstance(pil_image, Image.Image):
+    if not isinstance(inputLabel.pil_image, Image.Image):
         raise ValueError("Input must be a PIL Image object")
 
-    image_data = pil_image.load()
-    width, height = pil_image.size
-    negative_image = Image.new(pil_image.mode, (width, height))
+    maxval = getattr(inputLabel, "maxval",255)
+    image_data = inputLabel.pil_image.load()
+    width, height = inputLabel.pil_image.size
+    negative_image = Image.new(inputLabel.pil_image.mode, (width, height))
     neg_data = negative_image.load()
 
     for y in range(height):
@@ -20,133 +21,204 @@ def create_negative_image(pil_image, maxval=255 ):
     return negative_image
 
 
-def add_images(pil_image1, pil_image2):
-    """Add two images with saturation"""
-    # Ensure same size
-    if pil_image1.size != pil_image2.size:
-        pil_image2 = pil_image2.resize(pil_image1.size)
+def add_images(inputLabel1, inputLabel2):
+    #ensure same size
+    if inputLabel1.pil_image.size != inputLabel2.pil_image.size:
+        inputLabel2.pil_image = inputLabel2.pil_image.resize(inputLabel1.pil_image.size)
 
-    # Convert to numpy for efficient computation
-    arr1 = np.array(pil_image1, dtype=np.int16)
-    arr2 = np.array(pil_image2, dtype=np.int16)
+    maxval = getattr(inputLabel1, "maxval", 255)
 
-    # Add with saturation
-    result = np.clip(arr1 + arr2, 0, 255).astype(np.uint8)
+    # Convert image to numpy array
+    arr1 = np.array(inputLabel1.pil_image, dtype=np.int16)
+    arr2 = np.array(inputLabel2.pil_image, dtype=np.int16)
 
-    return Image.fromarray(result)
-
-
-def subtract_images(pil_image1, pil_image2):
-    """Subtract image2 from image1 with saturation"""
-    if pil_image1.size != pil_image2.size:
-        pil_image2 = pil_image2.resize(pil_image1.size)
-
-    arr1 = np.array(pil_image1, dtype=np.int16)
-    arr2 = np.array(pil_image2, dtype=np.int16)
-
-    result = np.clip(arr1 - arr2, 0, 255).astype(np.uint8)
+    # Add them up, then convert back to 8-bit
+    result = np.clip(arr1 + arr2, 0, maxval).astype(np.uint8)
 
     return Image.fromarray(result)
 
 
-def multiply_images(pil_image1, pil_image2):
-    """Multiply two images (element-wise)"""
-    if pil_image1.size != pil_image2.size:
-        pil_image2 = pil_image2.resize(pil_image1.size)
+def subtract_images(inputLabel1, inputLabel2):
+    if inputLabel1.pil_image.size != inputLabel2.pil_image.size:
+        inputLabel2.pil_image = inputLabel2.pil_image.resize(inputLabel1.pil_image.size)
 
-    arr1 = np.array(pil_image1, dtype=np.float32) / 255.0
-    arr2 = np.array(pil_image2, dtype=np.float32) / 255.0
+    maxval = getattr(inputLabel1, "maxval", 255)
 
-    result = np.clip((arr1 * arr2) * 255, 0, 255).astype(np.uint8)
+    arr1 = np.array(inputLabel1.pil_image, dtype=np.int16)
+    arr2 = np.array(inputLabel2.pil_image, dtype=np.int16)
+
+    result = np.clip(arr1 - arr2, 0, maxval).astype(np.uint8)
 
     return Image.fromarray(result)
 
 
-def log_transform(pil_image, c=1.0):
-    """Apply logarithmic transformation"""
-    arr = np.array(pil_image, dtype=np.float32) / 255.0
+def multiply_images(inputLabel1, inputLabel2):
+    if inputLabel1.pil_image.size != inputLabel2.pil_image.size:
+        inputLabel2.pil_image = inputLabel2.pil_image.resize(inputLabel1.pil_image.size)
 
-    # Avoid log(0) by adding small epsilon
+    maxval = getattr(inputLabel1, "maxval", 255)
+
+    arr1 = np.array(inputLabel1.pil_image, dtype=np.float32) / maxval
+    arr2 = np.array(inputLabel2.pil_image, dtype=np.float32) / maxval
+
+    result = np.clip((arr1 * arr2) * maxval, 0, maxval).astype(np.uint8)
+
+    return Image.fromarray(result)
+
+
+def log_transform(inputLabel, c=1.0):
+    maxval = getattr(inputLabel, "maxval", 255)
+
+    arr = np.array(inputLabel.pil_image, dtype=np.float32) / maxval
+
     log_arr = c * np.log(1.0 + arr)
 
-    result = np.clip(log_arr * 255, 0, 255).astype(np.uint8)
+    result = np.clip(log_arr * maxval, 0, maxval).astype(np.uint8)
 
     return Image.fromarray(result)
 
 
-def power_transform(pil_image, gamma=1.0, c=1.0):
-    """Apply power (gamma) transformation with parameters gamma and c"""
-    if not isinstance(pil_image, Image.Image):
-        raise ValueError("Input must be a PIL Image object")
+def power_transform(inputLabel, gamma=1.0, c=1.0):
+    maxval = getattr(inputLabel, "maxval", 255)
 
-    # Convert to numpy array and normalize to [0, 1]
-    arr = np.array(pil_image, dtype=np.float32) / 255.0
+    arr = np.array(inputLabel.pil_image, dtype=np.float32) / maxval
 
-    # Apply power transformation: s = c * r^gamma
     power_arr = c * np.power(arr, gamma)
 
-    # Normalize back to [0, 255] for faithful display
-    max_val = np.max(power_arr)
-    if max_val > 0:
-        power_arr = (power_arr / max_val) * 255
+    max_output = np.max(power_arr)
+    if max_output > 0:
+        power_arr = (power_arr / max_output) * maxval
     else:
-        power_arr = power_arr * 255
+        power_arr = power_arr * maxval
 
-    result = np.clip(power_arr, 0, 255).astype(np.uint8)
+    result = np.clip(power_arr, 0, maxval).astype(np.uint8)
     return Image.fromarray(result)
 
-def connected_topology_4(pil_image):
-    """4-connected topology edge detection"""
-    if pil_image.mode != 'L':
-        gray_image = pil_image.convert('L')
+def connected_component_labeling(inputLabel, connectivity=4):
+    # Convert to grayscale if needed
+    if inputLabel.pil_image.mode != 'L':
+        gray = inputLabel.pil_image.convert('L')
     else:
-        gray_image = pil_image
+        gray = inputLabel.pil_image
 
-    arr = np.array(gray_image, dtype=np.float32)
-
-    # 4-connected Laplacian kernel
-    kernel = np.array([[0, -1, 0],
-                       [-1, 4, -1],
-                       [0, -1, 0]])
-
-    # Manual convolution for 4-connected
+    arr = np.array(gray, dtype=np.uint8)
     height, width = arr.shape
-    result = np.zeros_like(arr)
 
-    for y in range(1, height - 1):
-        for x in range(1, width - 1):
-            neighborhood = arr[y - 1:y + 2, x - 1:x + 2]
-            result[y, x] = np.sum(neighborhood * kernel)
+    # Binary threshold (treat >0 as foreground)
+    binary = (arr > 0).astype(np.uint8)
 
-    result = np.clip(np.abs(result), 0, 255).astype(np.uint8)
-    return Image.fromarray(result)
+    # Output label image
+    labels = np.zeros_like(binary, dtype=np.int32)
 
-
-def connected_topology_8(pil_image):
-    """8-connected topology edge detection"""
-    if pil_image.mode != 'L':
-        gray_image = pil_image.convert('L')
+    # Neighbor definitions
+    if connectivity == 4:
+        neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    elif connectivity == 8:
+        neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1),
+                     (-1, -1), (-1, 1), (1, -1), (1, 1)]
     else:
-        gray_image = pil_image
+        raise ValueError("Connectivity must be 4 or 8")
 
-    arr = np.array(gray_image, dtype=np.float32)
+    current_label = 1
 
-    # 8-connected Laplacian kernel
-    kernel = np.array([[-1, -1, -1],
-                       [-1, 8, -1],
-                       [-1, -1, -1]])
+    # Iterate through pixels
+    for y in range(height):
+        for x in range(width):
+            if binary[y, x] == 1 and labels[y, x] == 0:
+                # Start BFS flood fill
+                queue = deque()
+                queue.append((y, x))
+                labels[y, x] = current_label
 
-    height, width = arr.shape
-    result = np.zeros_like(arr)
+                while queue:
+                    cy, cx = queue.popleft()
+                    for dy, dx in neighbors:
+                        ny, nx = cy + dy, cx + dx
+                        if (0 <= ny < height) and (0 <= nx < width):
+                            if binary[ny, nx] == 1 and labels[ny, nx] == 0:
+                                labels[ny, nx] = current_label
+                                queue.append((ny, nx))
 
-    for y in range(1, height - 1):
-        for x in range(1, width - 1):
-            neighborhood = arr[y - 1:y + 2, x - 1:x + 2]
-            result[y, x] = np.sum(neighborhood * kernel)
+                current_label += 1
 
-    result = np.clip(np.abs(result), 0, 255).astype(np.uint8)
-    return Image.fromarray(result)
+    # Normalize labels for visualization (map to 0–255 range)
+    if current_label > 1:
+        max_label = current_label - 1
+        norm_labels = (labels * (255 // max_label)).astype(np.uint8)
+    else:
+        norm_labels = labels.astype(np.uint8)
 
+    return Image.fromarray(norm_labels)
+
+def connected_component_labeling_m(inputLabel):
+    if inputLabel.pil_image.mode != 'L':
+        gray = inputLabel.pil_image.convert('L')
+    else:
+        gray = inputLabel.pil_image
+
+    arr = np.array(gray, dtype=np.uint8)
+    binary = (arr > 0).astype(np.uint8)
+    height, width = binary.shape
+
+    labels = np.zeros_like(binary, dtype=np.int32)
+    current_label = 1
+
+    # Offsets for neighbors
+    neighbors_4 = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    neighbors_diag = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+
+    for y in range(height):
+        for x in range(width):
+            if binary[y, x] == 1 and labels[y, x] == 0:
+                # Start BFS
+                queue = deque()
+                queue.append((y, x))
+                labels[y, x] = current_label
+
+                while queue:
+                    cy, cx = queue.popleft()
+
+                    # 4-connected neighbors (always allowed)
+                    for dy, dx in neighbors_4:
+                        ny, nx = cy + dy, cx + dx
+                        if 0 <= ny < height and 0 <= nx < width:
+                            if binary[ny, nx] == 1 and labels[ny, nx] == 0:
+                                labels[ny, nx] = current_label
+                                queue.append((ny, nx))
+
+                    # m-connected diagonals (conditionally allowed)
+                    for dy, dx in neighbors_diag:
+                        ny, nx = cy + dy, cx + dx
+                        if 0 <= ny < height and 0 <= nx < width:
+                            if binary[ny, nx] == 1 and labels[ny, nx] == 0:
+                                # Check shared 4-neighbors
+                                if dy == -1 and dx == -1:  # top-left
+                                    if not (binary[cy - 1, cx] and binary[cy, cx - 1]):
+                                        labels[ny, nx] = current_label
+                                        queue.append((ny, nx))
+                                elif dy == -1 and dx == 1:  # top-right
+                                    if not (binary[cy - 1, cx] and binary[cy, cx + 1]):
+                                        labels[ny, nx] = current_label
+                                        queue.append((ny, nx))
+                                elif dy == 1 and dx == -1:  # bottom-left
+                                    if not (binary[cy + 1, cx] and binary[cy, cx - 1]):
+                                        labels[ny, nx] = current_label
+                                        queue.append((ny, nx))
+                                elif dy == 1 and dx == 1:  # bottom-right
+                                    if not (binary[cy + 1, cx] and binary[cy, cx + 1]):
+                                        labels[ny, nx] = current_label
+                                        queue.append((ny, nx))
+
+                current_label += 1
+
+    # Normalize labels for visualization
+    if current_label > 1:
+        max_label = current_label - 1
+        norm_labels = (labels * (255 // max_label)).astype(np.uint8)
+    else:
+        norm_labels = labels.astype(np.uint8)
+
+    return Image.fromarray(norm_labels)
 
 def connected_topology_m(pil_image):
     """M-connected topology (mixed connectivity)"""

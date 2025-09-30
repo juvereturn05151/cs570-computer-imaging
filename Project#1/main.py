@@ -26,8 +26,7 @@ def main():
     #setup command interface
     command_entry = setup_command_interface(command_frame, input_image_data, treeView, rootIID, output_image_label)
 
-    setup_operations_panel(command_frame, input_image_data, input_image_data2, output_image_data,
-                           input_image_label, input_image_label2, output_image_label)
+    setup_operations_panel(command_frame, input_image_label, input_image_label2, output_image_label)
 
     # setup interpolation options
     interpolation_var = setup_interpolation_options(command_frame)

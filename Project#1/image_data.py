@@ -65,7 +65,7 @@ def load_negative_images(imageData):
     for name, imgDict in imageData.items():
         orig_pil = imgDict["pil"]
         maxval = imgDict.get("maxval", 255)
-        neg_pil = create_negative_image(orig_pil, maxval)
+        neg_pil = orig_pil
         neg_tk = ImageTk.PhotoImage(neg_pil)
 
         negImageData[name] = {
