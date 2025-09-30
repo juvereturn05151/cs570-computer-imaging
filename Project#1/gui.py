@@ -1,6 +1,4 @@
-import os
-from PIL import Image, ImageTk
-
+from image_data import  get_ppm_maxvalue
 
 def select_image(imageName, imageLabel, outputImageLabel, imageData, output_image_frame):
     # Update input image
@@ -10,14 +8,6 @@ def select_image(imageName, imageLabel, outputImageLabel, imageData, output_imag
     imageLabel.tk_image = tk_input
     imageLabel.original_pil = pil_input
     imageLabel.pil_image = pil_input
-
-    # Update output image
-    pil_output = output_image_frame[imageName]["pil"]
-    tk_output = output_image_frame[imageName]["tk"]
-    outputImageLabel.config(image=tk_output)
-    outputImageLabel.tk_image = tk_output
-    outputImageLabel.original_pil = pil_output
-    outputImageLabel.pil_image = pil_output
 
 def select_image2(imageName, imageLabel, imageData):
     pil_input = imageData[imageName]["pil"]
@@ -43,12 +33,30 @@ def on_tree_select2(event, treeView, imageLabel, input_image_data):
 
 
 def load_image(loadFilename, imageData, treeView=None, rootIID=None):
-    pil_Image = Image.open('data/' + loadFilename)
-    tk_Image = ImageTk.PhotoImage(pil_Image)
+    import os
+    from PIL import Image, ImageTk
+
+    pil_image = Image.open('data/' + loadFilename)
+    tk_image = ImageTk.PhotoImage(pil_image)
     name = os.path.basename(loadFilename)
-    imageData[name] = tk_Image
-    if treeView and rootIID:
+
+    # Get maxval for PPM (you already have a helper function get_ppm_maxvalue)
+    try:
+        maxval = get_ppm_maxvalue('data/' + loadFilename)
+    except Exception:
+        maxval = None  # fallback if not a PPM or error occurs
+
+    # Store in same structure as load_default_images
+    imageData[name] = {
+        "pil": pil_image,
+        "tk": tk_image,
+        "maxval": maxval,
+    }
+
+    # Insert into TreeView if provided
+    if treeView is not None and rootIID is not None:
         treeView.insert(rootIID, -1, text=name)
+
 
 
 def save_output_image(fileName, outputImageLabel):

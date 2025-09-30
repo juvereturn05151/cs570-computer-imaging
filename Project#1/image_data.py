@@ -1,6 +1,5 @@
 import os
 from PIL import Image, ImageTk
-from image_ops import create_negative_image
 
 def get_ppm_maxvalue(filename):
     with open(filename, "rb") as f:
@@ -64,7 +63,6 @@ def load_negative_images(imageData):
 
     for name, imgDict in imageData.items():
         orig_pil = imgDict["pil"]
-        maxval = imgDict.get("maxval", 255)
         neg_pil = orig_pil
         neg_tk = ImageTk.PhotoImage(neg_pil)
 
