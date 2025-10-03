@@ -238,7 +238,44 @@ def connected_component_labeling_m(inputLabel):
     else:
         norm_labels = labels.astype(np.uint8)
 
-    return Image.fromarray(norm_labels)
+    # Normalize labels for visualization (map to 0–255 range)
+    colors = [
+        (255, 0, 0),  # 1
+        (0, 255, 0),  # 2
+        (0, 0, 255),  # 3
+        (255, 255, 0),  # 4
+        (255, 0, 255),  # 5
+        (0, 255, 255),  # 6
+        (128, 0, 0),  # 7
+        (0, 128, 0),  # 8
+        (0, 0, 128),  # 9
+        (128, 128, 0),  # 10
+        (128, 0, 128),  # 11
+        (0, 128, 128),  # 12
+        (255, 128, 0),  # 13
+        (128, 255, 0),  # 14
+        (0, 255, 128),  # 15
+        (0, 128, 255),  # 16
+        (128, 0, 255),  # 17
+        (255, 0, 128),  # 18
+        (192, 192, 192),  # 19
+        (64, 64, 64),  # 20
+    ]
+
+    height, width = labels.shape
+    rgb_image = np.zeros((height, width, 3), dtype=np.uint8)
+
+    for y in range(height):
+        for x in range(width):
+            label = labels[y, x]
+            if label > 0:
+                # wrap around if there are more labels than colors
+                color_index = (label - 1) % len(colors)
+                rgb_image[y, x] = colors[color_index]
+            else:
+                rgb_image[y, x] = [0, 0, 0]  # background
+
+    return Image.fromarray(rgb_image)
 
 def connected_topology_m(pil_image):
     """M-connected topology (mixed connectivity)"""
