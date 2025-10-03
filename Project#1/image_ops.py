@@ -273,34 +273,9 @@ def connected_component_labeling_m(inputLabel):
                 color_index = (label - 1) % len(colors)
                 rgb_image[y, x] = colors[color_index]
             else:
-                rgb_image[y, x] = [0, 0, 0]  # background
+                rgb_image[y, x] = [0, 0, 0]
 
     return Image.fromarray(rgb_image)
-
-def connected_topology_m(pil_image):
-    """M-connected topology (mixed connectivity)"""
-    if pil_image.mode != 'L':
-        gray_image = pil_image.convert('L')
-    else:
-        gray_image = pil_image
-
-    arr = np.array(gray_image, dtype=np.float32)
-
-    # M-connected combines diagonal and direct neighbors with different weights
-    kernel = np.array([[-0.7, -1, -0.7],
-                       [-1, 6, -1],
-                       [-0.7, -1, -0.7]])
-
-    height, width = arr.shape
-    result = np.zeros_like(arr)
-
-    for y in range(1, height - 1):
-        for x in range(1, width - 1):
-            neighborhood = arr[y - 1:y + 2, x - 1:x + 2]
-            result[y, x] = np.sum(neighborhood * kernel)
-
-    result = np.clip(np.abs(result), 0, 255).astype(np.uint8)
-    return Image.fromarray(result)
 
 def nearest_neighbor(pil_image, new_width, new_height):
     original_width, original_height = pil_image.size
