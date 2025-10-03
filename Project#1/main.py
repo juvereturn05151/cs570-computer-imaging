@@ -14,7 +14,7 @@ os.chdir(ORIGIN_PATH)
 def main():
     root = tk.Tk()
     root.title("CS 570 Project#1")
-    root.geometry("1080x520")
+    root.geometry("1080x560")
     #setup GUI frames and get frame references
     top_frame, operation_frame, operation_frame2, input_image_frame, input_image_frame2, output_image_frame, command_frame = setup_frames(root)
 
