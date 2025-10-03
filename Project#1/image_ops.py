@@ -49,7 +49,7 @@ def log_transform(input_image, maxval, c=1.0):
     if not isinstance(input_image, Image.Image):
         raise ValueError("Input must be a PIL Image object")
 
-    return apply_log_transform(input_image, maxval, c=1.0)
+    return apply_log_transform(input_image, maxval, c)
 
 
 def power_transform(input_image, maxval,gamma=1.0, c=1.0):

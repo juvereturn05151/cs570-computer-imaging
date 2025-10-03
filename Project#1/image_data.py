@@ -58,7 +58,7 @@ def copy_images(imageData, treeView, rootIID):
 
     return newImageData
 
-def load_negative_images(imageData):
+def load_output_images(imageData):
     negImageData = {}
 
     for name, imgDict in imageData.items():
