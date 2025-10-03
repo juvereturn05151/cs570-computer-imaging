@@ -3,42 +3,66 @@ from connected_component_labeling import connected_component_label, connected_co
 from resize_operations import nearest_neighbor_resize, billinear_interpolation_resize
 from arithmetic_operations import apply_negative_image, apply_images_addition, apply_images_subtraction, apply_images_multiplication, apply_log_transform, apply_power_transform
 
-def create_negative_image(inputImage, maxval):
-    if not isinstance(inputImage, Image.Image):
+def create_negative_image(input_image, maxval):
+    if not isinstance(input_image, Image.Image):
         raise ValueError("Input must be a PIL Image object")
 
-    return apply_negative_image(inputImage, maxval)
+    return apply_negative_image(input_image, maxval)
 
-def add_images(inputImage, inputImage2, maxval):
-    if inputImage.size != inputImage2.size:
-        inputImage2 = inputImage2.resize(inputImage.size)
+def add_images(input_image1, input_image2, maxval):
+    if not isinstance(input_image1, Image.Image):
+        raise ValueError("Input must be a PIL Image object")
 
-    return apply_images_addition(inputImage, inputImage2, maxval)
+    if not isinstance(input_image2, Image.Image):
+        raise ValueError("Input must be a PIL Image object")
 
-def subtract_images(inputImage1, inputImage2, maxval):
-    if inputImage1.size != inputImage2.size:
-        inputImage2 = inputImage2.resize(inputImage1.size)
+    if input_image1.size != input_image2.size:
+        input_image2 = input_image2.resize(input_image1.size)
 
-    return apply_images_subtraction(inputImage1, inputImage2, maxval)
+    return apply_images_addition(input_image1, input_image2, maxval)
 
-def multiply_images(inputImage1, inputImage2, maxval):
-    if inputImage1.size != inputImage2.size:
-        inputImage2 = inputImage2.resize(inputImage1.size)
+def subtract_images(input_image1, input_image2, maxval):
+    if not isinstance(input_image1, Image.Image):
+        raise ValueError("Input must be a PIL Image object")
 
-    return apply_images_multiplication(inputImage1, inputImage2, maxval)
+    if not isinstance(input_image2, Image.Image):
+        raise ValueError("Input must be a PIL Image object")
 
-def log_transform(inputImage, maxval, c=1.0):
-    return apply_log_transform(inputImage, maxval, c=1.0)
+    if input_image1.size != input_image2.size:
+        input_image2 = input_image2.resize(input_image1.size)
+
+    return apply_images_subtraction(input_image1, input_image2, maxval)
+
+def multiply_images(input_image1, input_image2, maxval):
+    if not isinstance(input_image1, Image.Image):
+        raise ValueError("Input must be a PIL Image object")
+
+    if not isinstance(input_image2, Image.Image):
+        raise ValueError("Input must be a PIL Image object")
+
+    if input_image1.size != input_image2.size:
+        input_image2 = input_image2.resize(input_image1.size)
+
+    return apply_images_multiplication(input_image1, input_image2, maxval)
+
+def log_transform(input_image, maxval, c=1.0):
+    if not isinstance(input_image, Image.Image):
+        raise ValueError("Input must be a PIL Image object")
+
+    return apply_log_transform(input_image, maxval, c=1.0)
 
 
-def power_transform(inputImage, maxval,gamma=1.0, c=1.0):
-    return apply_power_transform(inputImage, maxval,gamma, c)
+def power_transform(input_image, maxval,gamma=1.0, c=1.0):
+    if not isinstance(input_image, Image.Image):
+        raise ValueError("Input must be a PIL Image object")
 
-def connected_component_labeling(inputLabel, connectivity=4):
-    return connected_component_label(inputLabel, connectivity)
+    return apply_power_transform(input_image, maxval,gamma, c)
 
-def connected_component_labeling_m(inputLabel):
-    return connected_component_label_m(inputLabel)
+def connected_component_labeling(input_label, connectivity=4):
+    return connected_component_label(input_label, connectivity)
+
+def connected_component_labeling_m(input_label):
+    return connected_component_label_m(input_label)
 
 def nearest_neighbor(pil_image, new_width, new_height):
     return nearest_neighbor_resize(pil_image, new_width, new_height)

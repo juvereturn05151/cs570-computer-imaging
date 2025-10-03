@@ -2,7 +2,7 @@ from collections import deque
 import numpy as np
 from PIL import Image
 
-# Predefined distinct colors
+# Predefined 20 colors
 COLORS = [
     (255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0),
     (255, 0, 255), (0, 255, 255), (128, 0, 0), (0, 128, 0),
@@ -11,14 +11,12 @@ COLORS = [
     (128, 0, 255), (255, 0, 128), (192, 192, 192), (64, 64, 64),
 ]
 
-def _prepare_binary(inputLabel):
-    """Convert to grayscale and binarize (foreground > 0)."""
-    gray = inputLabel.pil_image.convert('L') if inputLabel.pil_image.mode != 'L' else inputLabel.pil_image
+def prepare_binary(input_label):
+    gray = input_label.pil_image.convert('L') if input_label.pil_image.mode != 'L' else input_label.pil_image
     arr = np.array(gray, dtype=np.uint8)
     return (arr > 0).astype(np.uint8)
 
-def _visualize_labels(labels):
-    """Map labels to RGB colors."""
+def visualize_labels(labels):
     h, w = labels.shape
     rgb = np.zeros((h, w, 3), dtype=np.uint8)
     for y in range(h):
@@ -28,9 +26,8 @@ def _visualize_labels(labels):
                 rgb[y, x] = COLORS[(label - 1) % len(COLORS)]
     return Image.fromarray(rgb)
 
-def connected_component_label(inputLabel, connectivity=4):
-    """Standard CCL with 4- or 8-connectivity."""
-    binary = _prepare_binary(inputLabel)
+def connected_component_label(input_label, connectivity=4):
+    binary = prepare_binary(input_label)
     h, w = binary.shape
     labels = np.zeros_like(binary, dtype=np.int32)
     current_label = 1
@@ -58,11 +55,10 @@ def connected_component_label(inputLabel, connectivity=4):
                                 queue.append((ny, nx))
                 current_label += 1
 
-    return _visualize_labels(labels)
+    return visualize_labels(labels)
 
 def connected_component_label_m(inputLabel):
-    """CCL with m-connectivity."""
-    binary = _prepare_binary(inputLabel)
+    binary = prepare_binary(inputLabel)
     h, w = binary.shape
     labels = np.zeros_like(binary, dtype=np.int32)
     current_label = 1
@@ -77,14 +73,14 @@ def connected_component_label_m(inputLabel):
                 labels[y, x] = current_label
                 while queue:
                     cy, cx = queue.popleft()
-                    # Always check 4-connected
+                    #check 4-connected
                     for dy, dx in neighbors_4:
                         ny, nx = cy + dy, cx + dx
                         if 0 <= ny < h and 0 <= nx < w:
                             if binary[ny, nx] and labels[ny, nx] == 0:
                                 labels[ny, nx] = current_label
                                 queue.append((ny, nx))
-                    # Conditional diagonals
+                    #then check diagonals
                     for dy, dx in neighbors_diag:
                         ny, nx = cy + dy, cx + dx
                         if 0 <= ny < h and 0 <= nx < w:
@@ -99,4 +95,4 @@ def connected_component_label_m(inputLabel):
                                     labels[ny, nx] = current_label; queue.append((ny, nx))
                 current_label += 1
 
-    return _visualize_labels(labels)
+    return visualize_labels(labels)

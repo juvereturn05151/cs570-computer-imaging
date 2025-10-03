@@ -19,28 +19,28 @@ def main():
     top_frame, operation_frame, operation_frame2, input_image_frame, input_image_frame2, output_image_frame, command_frame = setup_frames(root)
 
     #setup treeview and get treeview reference and root item ID
-    treeView, rootIID = setup_treeview(operation_frame)
-    treeView2, rootIID2 = setup_treeview(operation_frame2)
+    tree_view, rootIID = setup_treeview(operation_frame)
+    tree_view2, rootIID2 = setup_treeview(operation_frame2)
 
     #load default images and store in imageData dictionary
-    input_image_data = load_default_images(treeView, rootIID)
-    input_image_data2 = copy_images(input_image_data, treeView2, rootIID2 )
+    input_image_data = load_default_images(tree_view, rootIID)
+    input_image_data2 = copy_images(input_image_data, tree_view2, rootIID2 )
     output_image_data = load_negative_images(input_image_data)
 
     #setup image display labels and get label references
     input_image_label, input_image_label2, output_image_label = setup_image_labels(input_image_frame, input_image_frame2, output_image_frame, input_image_data, input_image_data2, output_image_data)
 
     #setup command interface
-    command_entry, path_label = setup_command_interface(command_frame, input_image_data, treeView, rootIID, output_image_label)
+    setup_command_interface(command_frame, input_image_data, tree_view, rootIID, output_image_label)
 
     setup_operations_panel(command_frame, input_image_label, input_image_label2, output_image_label)
 
     # setup interpolation options
     interpolation_var = setup_interpolation_options(command_frame)
     #bind event handlers to widgets
-    bind_events(treeView, input_image_label, output_image_label, input_image_data, output_image_data)
+    bind_events(tree_view, input_image_label, output_image_label, input_image_data, output_image_data)
 
-    bind_events2(treeView2, input_image_label2, input_image_data2)
+    bind_events2(tree_view2, input_image_label2, input_image_data2)
 
     #setup window resize monitoring
     setup_window_resize_monitor(root, interpolation_var, input_image_label, input_image_label2, output_image_label)
