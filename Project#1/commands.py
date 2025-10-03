@@ -7,7 +7,6 @@ from image_ops import (
 )
 
 def parse_command_args(tokens, flag):
-    """Helper: extract argument(s) after a given flag"""
     if flag not in tokens:
         return None
     idx = tokens.index(flag)
@@ -47,7 +46,7 @@ def execute_command(event=None, command_entry=None,
             print(f"Directory not found: {new_dir}")
         return
 
-    # ---------- Load/Save ----------
+    #load/save
     if op == "load":
         inputs = parse_command_args(tokens, "-i")
         if not inputs:
@@ -70,7 +69,7 @@ def execute_command(event=None, command_entry=None,
         print(f"Saved {out_file}")
         return
 
-    # ---------- Image Operations ----------
+    #image operations
     input_files = parse_command_args(tokens, "-i")
     output_file = parse_command_args(tokens, "-o")
 
@@ -112,6 +111,6 @@ def execute_command(event=None, command_entry=None,
         print(f"Unknown operation: {op}")
         return
 
-    # Save result
+    #save result
     result.save(os.path.join(os.getcwd(), output_file))
     print(f"{op.upper()} operation complete. Saved as {output_file}")
