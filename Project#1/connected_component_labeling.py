@@ -11,10 +11,10 @@ COLORS = [
     (128, 0, 255), (255, 0, 128), (192, 192, 192), (64, 64, 64),
 ]
 
-def prepare_binary(input_label):
+def prepare_binary(input_label, threshold=128):
     gray = input_label.pil_image.convert('L') if input_label.pil_image.mode != 'L' else input_label.pil_image
     arr = np.array(gray, dtype=np.uint8)
-    return (arr > 0).astype(np.uint8)
+    return (arr > threshold).astype(np.uint8)
 
 def visualize_labels(labels):
     h, w = labels.shape
