@@ -101,7 +101,6 @@ def execute_command(event=None, command_entry=None,
         result = create_negative_image(input_pils[0], maxval)
     elif op == "log":
         c_val = float(parse_command_args(tokens, "-c") or 1.0)
-        base_val = float(parse_command_args(tokens, "-b") or 10.0)
         result = log_transform(input_pils[0], maxval, c=c_val)
     elif op == "pow":
         c_val = float(parse_command_args(tokens, "-c") or 1.0)
