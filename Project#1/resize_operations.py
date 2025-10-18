@@ -12,8 +12,8 @@ def nearest_neighbor_resize(pil_image, new_width, new_height):
 
     for y in range(new_height):
         for x in range(new_width):
-            orig_x = min(math.floor(x * x_ratio), original_width - 1)
-            orig_y = min(math.floor(y * y_ratio), original_height - 1)
+            orig_x = min(int(round(x * x_ratio)), original_width - 1)
+            orig_y = min(int(round(y * y_ratio)), original_height - 1)
 
             new_pixels[x, y] = original_pixels[orig_x, orig_y]
 
