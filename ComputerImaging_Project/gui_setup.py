@@ -171,6 +171,8 @@ def setup_operations_panel(command_frame, inputLabel, inputLabel2, outputImageLa
 
     tk.Button(ops_frame, text="Product", command=lambda: update_output_image(outputImageLabel,multiply_images(inputLabel.pil_image, inputLabel2.pil_image, maxval))).pack(fill="x")
 
+
+
     def execute_log_transform():
         try:
             c_value = current_c.get()
@@ -194,6 +196,8 @@ def setup_operations_panel(command_frame, inputLabel, inputLabel2, outputImageLa
             print(f"Error in Power Transform: {e}")
 
     tk.Button(ops_frame, text="Power Transform", command=execute_power_transform).pack(fill="x")
+
+    tk.Button(ops_frame, text="Update Input Image w/ Output Image", command=lambda: update_output_image(inputLabel, outputImageLabel.pil_image)).pack(fill="x")
 
     #row2: connected labeling operations
     connected_labeling_frame = tk.Frame(ops_frame)
