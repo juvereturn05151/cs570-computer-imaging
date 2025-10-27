@@ -1,7 +1,7 @@
 import tkinter as tk
 import os
-from gui import load_image, save_output_image
-from image_ops import (
+from ui.gui import load_image, save_output_image
+from images_ops.image_ops import (
     create_negative_image, add_images, subtract_images, multiply_images,
     log_transform, power_transform, apply_histogram_equalization,
     apply_gaussian_smoothing, apply_edge_detection, apply_unsharp_masking

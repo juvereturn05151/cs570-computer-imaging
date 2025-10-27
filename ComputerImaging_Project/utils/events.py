@@ -1,6 +1,6 @@
 from PIL import ImageTk
-from gui import on_tree_select, on_tree_select2
-from image_ops import nearest_neighbor, billinear_interpolation
+from ui.gui import on_tree_select, on_tree_select2
+from images_ops.image_ops import nearest_neighbor, billinear_interpolation
 
 
 def bind_events(tree_view, image_label, output_image_label, input_image_data, output_image_frame):

@@ -1,12 +1,13 @@
+import cv2
 from PIL import Image
 
-from connected_component_labeling import connected_component_label, connected_component_label_m
-from resize_operations import nearest_neighbor_resize, billinear_interpolation_resize
-from arithmetic_operations import apply_negative_image, apply_images_addition, apply_images_subtraction, apply_images_multiplication, apply_log_transform, apply_power_transform
-from histogram_equalization import histogram_equalizer
-from smoothing_filter import gaussian_smoothing
-from edge_detection import sobel_edge_detection
-from unsharp_masking import unsharp_masking
+from images_ops.connected_component_labeling import connected_component_label, connected_component_label_m
+from images_ops.resize_operations import nearest_neighbor_resize, billinear_interpolation_resize
+from images_ops.arithmetic_operations import apply_negative_image, apply_images_addition, apply_images_subtraction, apply_images_multiplication, apply_log_transform, apply_power_transform
+from images_ops.histogram_equalization import histogram_equalization, histogram_equalization_opencv
+from images_ops.smoothing_filter import gaussian_smoothing
+from images_ops.edge_detection import sobel_edge_detection
+from images_ops.unsharp_masking import unsharp_masking
 
 def create_negative_image(input_image, maxval):
     if not isinstance(input_image, Image.Image):
@@ -77,7 +78,12 @@ def billinear_interpolation(pil_image, new_width, new_height):
     return billinear_interpolation_resize(pil_image, new_width, new_height)
 
 def apply_histogram_equalization(input_image, maxval=255):
-    return histogram_equalizer(input_image, maxval)
+    result, fig = histogram_equalization(input_image, maxval, plot_histogram=True)
+    return result
+
+def apply_histogram_equalization_opencv(input_image, maxval=255):
+    result, fig = histogram_equalization_opencv(input_image, maxval, plot_histogram=True)
+    return result
 
 def apply_gaussian_smoothing(input_image, kernel_size, sigma, padding_mode='reflect'):
     return gaussian_smoothing(input_image, kernel_size, sigma, padding_mode)

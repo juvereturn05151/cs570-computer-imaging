@@ -1,11 +1,11 @@
 import tkinter as tk
 from tkinter import ttk
-from commands import execute_command
+from utils.commands import execute_command
 import os
-from image_ops import (
+from images_ops.image_ops import (
     create_negative_image, add_images, subtract_images, multiply_images,
     log_transform, power_transform, connected_component_labeling,
-    connected_component_labeling_m, apply_histogram_equalization,
+    connected_component_labeling_m, apply_histogram_equalization,apply_histogram_equalization_opencv,
     apply_gaussian_smoothing, apply_edge_detection, apply_unsharp_masking
 )
 from image_data import update_output_image
@@ -381,7 +381,10 @@ def setup_operations_panel(command_frame, inputLabel, inputLabel2, outputImageLa
                                                                                             apply_histogram_equalization(
                                                                                                 inputLabel.pil_image,
                                                                                                 maxval))).pack(fill="x")
-
+    tk.Button(ops_frame, text="Histogram Equalization OpenCV", command=lambda: update_output_image(outputImageLabel,
+                                                                                            apply_histogram_equalization_opencv(
+                                                                                                inputLabel.pil_image,
+                                                                                                maxval))).pack(fill="x")
     # row2: connected labeling operations
     connected_labeling_frame = tk.Frame(ops_frame)
     connected_labeling_frame.pack(fill="x", pady=(10, 0))

@@ -7,7 +7,7 @@ Copyright:    (c) 2025 DigiPen Institute of Technology. All rights reserved.
 import numpy as np
 from PIL import Image
 
-from smoothing_filter import gaussian_smoothing
+from images_ops.smoothing_filter import gaussian_smoothing
 
 def unsharp_masking(input_image, kernel_size, sigma, k, padding_mode='reflect'):
     if not isinstance(input_image, Image.Image):

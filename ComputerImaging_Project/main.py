@@ -1,9 +1,9 @@
 import tkinter as tk
 import gc
 import os
-from gui_setup import setup_frames, setup_treeview, setup_image_labels, setup_command_interface, setup_interpolation_options, setup_operations_panel, setup_gaussian_filter_panel
+from ui.gui_setup import setup_frames, setup_treeview, setup_image_labels, setup_command_interface, setup_interpolation_options, setup_operations_panel, setup_gaussian_filter_panel
 from image_data import load_default_images, load_output_images, copy_images
-from events import bind_events, setup_window_resize_monitor, bind_events2
+from utils.events import bind_events, setup_window_resize_monitor, bind_events2
 
 ORIGIN_PATH = os.path.join(os.getcwd(), "data")
 
@@ -15,7 +15,7 @@ os.chdir(ORIGIN_PATH)
 def main():
     root = tk.Tk()
     root.title("CS 570 Project#1")
-    root.geometry("1080x560")
+    root.geometry("1080x650")
 
     # Setup GUI frames with Gaussian filter frame
     (top_frame, gaussian_filter_frame, operation_frame, operation_frame2,
