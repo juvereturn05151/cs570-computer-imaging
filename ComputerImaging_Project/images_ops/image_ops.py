@@ -1,4 +1,9 @@
-import cv2
+"""
+File Name:    unsharp_masking.py
+Author(s):    Ju-ve Chankasemporn
+Copyright:    (c) 2025 DigiPen Institute of Technology. All rights reserved.
+"""
+
 from PIL import Image
 
 from images_ops.connected_component_labeling import connected_component_label, connected_component_label_m

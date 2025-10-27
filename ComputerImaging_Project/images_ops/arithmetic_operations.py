@@ -1,3 +1,9 @@
+"""
+File Name:    unsharp_masking.py
+Author(s):    Ju-ve Chankasemporn
+Copyright:    (c) 2025 DigiPen Institute of Technology. All rights reserved.
+"""
+
 from PIL import Image
 import numpy as np
 

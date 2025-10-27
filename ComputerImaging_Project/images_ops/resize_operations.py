@@ -1,5 +1,12 @@
+"""
+File Name:    unsharp_masking.py
+Author(s):    Ju-ve Chankasemporn
+Copyright:    (c) 2025 DigiPen Institute of Technology. All rights reserved.
+"""
+
 from PIL import Image
 import math
+
 def nearest_neighbor_resize(pil_image, new_width, new_height):
     original_width, original_height = pil_image.size
     new_image = Image.new(pil_image.mode, (new_width, new_height))

@@ -1,6 +1,14 @@
+"""
+File Name:    unsharp_masking.py
+Author(s):    Ju-ve Chankasemporn
+Copyright:    (c) 2025 DigiPen Institute of Technology. All rights reserved.
+"""
+
 import tkinter as tk
 import os
+
 from ui.gui import load_image, save_output_image
+
 from images_ops.image_ops import (
     create_negative_image, add_images, subtract_images, multiply_images,
     log_transform, power_transform, apply_histogram_equalization,

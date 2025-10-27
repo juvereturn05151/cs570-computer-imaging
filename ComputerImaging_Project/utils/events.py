@@ -1,7 +1,13 @@
+"""
+File Name:    unsharp_masking.py
+Author(s):    Ju-ve Chankasemporn
+Copyright:    (c) 2025 DigiPen Institute of Technology. All rights reserved.
+"""
+
 from PIL import ImageTk
+
 from ui.gui import on_tree_select, on_tree_select2
 from images_ops.image_ops import nearest_neighbor, billinear_interpolation
-
 
 def bind_events(tree_view, image_label, output_image_label, input_image_data, output_image_frame):
     tree_view.bind('<<TreeviewSelect>>',

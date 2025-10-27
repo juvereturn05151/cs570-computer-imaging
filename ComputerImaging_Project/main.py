@@ -1,6 +1,13 @@
+"""
+File Name:    unsharp_masking.py
+Author(s):    Ju-ve Chankasemporn
+Copyright:    (c) 2025 DigiPen Institute of Technology. All rights reserved.
+"""
+
 import tkinter as tk
 import gc
 import os
+
 from ui.gui_setup import setup_frames, setup_treeview, setup_image_labels, setup_command_interface, setup_interpolation_options, setup_operations_panel, setup_gaussian_filter_panel
 from image_data import load_default_images, load_output_images, copy_images
 from utils.events import bind_events, setup_window_resize_monitor, bind_events2
@@ -10,7 +17,6 @@ ORIGIN_PATH = os.path.join(os.getcwd(), "data")
 if not os.path.exists(ORIGIN_PATH):
     os.makedirs(ORIGIN_PATH)
 os.chdir(ORIGIN_PATH)
-
 
 def main():
     root = tk.Tk()

@@ -1,4 +1,10 @@
-from image_data import  get_ppm_maxvalue
+"""
+File Name:    unsharp_masking.py
+Author(s):    Ju-ve Chankasemporn
+Copyright:    (c) 2025 DigiPen Institute of Technology. All rights reserved.
+"""
+
+from image_data import get_ppm_maxvalue
 
 def select_image(imageName, imageLabel, outputImageLabel, imageData, output_image_frame):
     # Update input image
