@@ -21,7 +21,7 @@ def get_ppm_maxvalue(filename):
 
 def load_default_images(treeView, rootIID):
     imageData = {}
-    filenameList = ['cameraman.ppm', 'butterfly-16.ppm', 'apple-20.ppm']
+    filenameList = ['cameraman.ppm', 'butterfly-16.ppm', 'apple-20.ppm', 'beetle-13.ppm', 'cup-9.ppm', 'mandril_gray.ppm']
 
     for filename in filenameList:
         pil_image = Image.open(filename)
