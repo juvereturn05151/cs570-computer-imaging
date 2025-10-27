@@ -4,8 +4,9 @@ from gui import load_image, save_output_image
 from image_ops import (
     create_negative_image, add_images, subtract_images, multiply_images,
     log_transform, power_transform, apply_histogram_equalization,
-    apply_gaussian_smoothing, apply_edge_detection,apply_unsharp_masking
+    apply_gaussian_smoothing, apply_edge_detection, apply_unsharp_masking
 )
+from image_data import update_output_image  # Import this function
 
 
 def parse_command_args(tokens, flag):
@@ -210,11 +211,16 @@ def execute_command(event=None, command_entry=None,
         except ValueError as e:
             print(f"Error in unsharp masking parameters: {e}")
             return
-
     else:
         print(f"Unknown operation: {op}")
         return
 
-    # save result
-    result.save(os.path.join(os.getcwd(), output_file))
+    # Save result to file
+    output_path = os.path.join(os.getcwd(), output_file)
+    result.save(output_path)
     print(f"{op.upper()} operation complete. Saved as {output_file}")
+
+    # IMPORTANT: Update the output panel with the result
+    if outputImageLabel:
+        update_output_image(outputImageLabel, result)
+        print(f"Output panel updated with {output_file}")
