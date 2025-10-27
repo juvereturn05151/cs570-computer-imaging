@@ -4,7 +4,7 @@ from gui import load_image, save_output_image
 from image_ops import (
     create_negative_image, add_images, subtract_images, multiply_images,
     log_transform, power_transform, apply_histogram_equalization,
-    apply_gaussian_smoothing, apply_edge_detection  # Add this import
+    apply_gaussian_smoothing, apply_edge_detection,apply_unsharp_masking
 )
 
 
@@ -173,6 +173,44 @@ def execute_command(event=None, command_entry=None,
         except ValueError as e:
             print(f"Error in Sobel parameters: {e}")
             return
+    elif op == "unsharp":  # Unsharp masking command
+        if len(input_files) != 1:
+            print("Unsharp masking requires exactly one input file")
+            return
+
+        # Parse unsharp masking parameters
+        n_val = parse_command_args(tokens, "-N")
+        sigma_val = parse_command_args(tokens, "-sigma")
+        k_val = parse_command_args(tokens, "-k")
+
+        # Set defaults if not provided
+        kernel_size = int(n_val) if n_val else 5
+        sigma = float(sigma_val) if sigma_val else 1.0
+        k = float(k_val) if k_val else 1.0
+
+        try:
+            # Validate parameters
+            if kernel_size % 2 == 0:
+                print("Error: Kernel size must be odd")
+                return
+            if kernel_size < 3:
+                print("Error: Kernel size must be at least 3")
+                return
+            if sigma <= 0:
+                print("Error: Sigma must be positive")
+                return
+            if k <= 0:
+                print("Error: Scaling factor k must be positive")
+                return
+
+            # Apply unsharp masking
+            result = apply_unsharp_masking(input_pils[0], kernel_size, sigma, k, 'reflect')
+            print(f"Applied unsharp masking: N={kernel_size}, σ={sigma}, k={k}")
+
+        except ValueError as e:
+            print(f"Error in unsharp masking parameters: {e}")
+            return
+
     else:
         print(f"Unknown operation: {op}")
         return
