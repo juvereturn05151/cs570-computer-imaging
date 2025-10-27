@@ -3,8 +3,10 @@ import os
 from gui import load_image, save_output_image
 from image_ops import (
     create_negative_image, add_images, subtract_images, multiply_images,
-    log_transform, power_transform
+    log_transform, power_transform, apply_histogram_equalization,
+    apply_gaussian_smoothing  # Add this import
 )
+
 
 def parse_command_args(tokens, flag):
     if flag not in tokens:
@@ -46,7 +48,7 @@ def execute_command(event=None, command_entry=None,
             print(f"Directory not found: {new_dir}")
         return
 
-    #load/save
+    # load/save
     if op == "load":
         inputs = parse_command_args(tokens, "-i")
         if not inputs:
@@ -69,7 +71,7 @@ def execute_command(event=None, command_entry=None,
         print(f"Saved {out_file}")
         return
 
-    #image operations
+    # image operations
     input_files = parse_command_args(tokens, "-i")
     output_file = parse_command_args(tokens, "-o")
 
@@ -106,10 +108,53 @@ def execute_command(event=None, command_entry=None,
         c_val = float(parse_command_args(tokens, "-c") or 1.0)
         gamma_val = float(parse_command_args(tokens, "-gamma") or 1.0)
         result = power_transform(input_pils[0], maxval, gamma=gamma_val, c=c_val)
+    elif op == "histeq":  # Histogram equalization command
+        if len(input_files) != 1:
+            print("Histogram equalization requires exactly one input file")
+            return
+        result = apply_histogram_equalization(input_pils[0], maxval)
+    elif op == "gblur":  # Gaussian blur command
+        if len(input_files) != 1:
+            print("Gaussian blur requires exactly one input file")
+            return
+
+        # Parse Gaussian blur parameters
+        n_val = parse_command_args(tokens, "-N")
+        sigma_val = parse_command_args(tokens, "-sigma")
+
+        if not n_val:
+            print("Missing kernel size. Use -N <size>")
+            return
+        if not sigma_val:
+            print("Missing sigma value. Use -sigma <value>")
+            return
+
+        try:
+            kernel_size = int(n_val)
+            sigma = float(sigma_val)
+
+            # Validate kernel size (must be odd and >= 3)
+            if kernel_size % 2 == 0:
+                print("Error: Kernel size must be odd")
+                return
+            if kernel_size < 3:
+                print("Error: Kernel size must be at least 3")
+                return
+            if sigma <= 0:
+                print("Error: Sigma must be positive")
+                return
+
+            # Apply Gaussian blur with default padding mode
+            result = apply_gaussian_smoothing(input_pils[0], kernel_size, sigma, 'reflect')
+            print(f"Applied Gaussian blur: N={kernel_size}, σ={sigma}")
+
+        except ValueError as e:
+            print(f"Error in Gaussian blur parameters: {e}")
+            return
     else:
         print(f"Unknown operation: {op}")
         return
 
-    #save result
+    # save result
     result.save(os.path.join(os.getcwd(), output_file))
     print(f"{op.upper()} operation complete. Saved as {output_file}")
