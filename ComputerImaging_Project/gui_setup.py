@@ -6,7 +6,7 @@ from image_ops import (
     create_negative_image, add_images, subtract_images, multiply_images,
     log_transform, power_transform, connected_component_labeling,
     connected_component_labeling_m, apply_histogram_equalization,
-    apply_gaussian_smoothing
+    apply_gaussian_smoothing, apply_edge_detection
 )
 from image_data import update_output_image
 

@@ -1,5 +1,4 @@
 import numpy as np
-import math
 from PIL import Image
 
 def create_gaussian_kernel(kernel_size, sigma):

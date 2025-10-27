@@ -1,9 +1,11 @@
 from PIL import Image
+
 from connected_component_labeling import connected_component_label, connected_component_label_m
 from resize_operations import nearest_neighbor_resize, billinear_interpolation_resize
 from arithmetic_operations import apply_negative_image, apply_images_addition, apply_images_subtraction, apply_images_multiplication, apply_log_transform, apply_power_transform
 from histogram_equalization import histogram_equalizer
 from smoothing_filter import gaussian_smoothing
+from edge_detection import sobel_edge_detection
 
 def create_negative_image(input_image, maxval):
     if not isinstance(input_image, Image.Image):
@@ -78,3 +80,6 @@ def apply_histogram_equalization(input_image, maxval=255):
 
 def apply_gaussian_smoothing(input_image, kernel_size, sigma, padding_mode='reflect'):
     return gaussian_smoothing(input_image, kernel_size, sigma, padding_mode)
+
+def apply_edge_detection(input_image, scaling_factor):
+    return sobel_edge_detection(input_image, scaling_factor)
