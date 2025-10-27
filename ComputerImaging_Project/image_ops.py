@@ -6,6 +6,7 @@ from arithmetic_operations import apply_negative_image, apply_images_addition, a
 from histogram_equalization import histogram_equalizer
 from smoothing_filter import gaussian_smoothing
 from edge_detection import sobel_edge_detection
+from unsharp_masking import unsharp_masking
 
 def create_negative_image(input_image, maxval):
     if not isinstance(input_image, Image.Image):
@@ -83,3 +84,6 @@ def apply_gaussian_smoothing(input_image, kernel_size, sigma, padding_mode='refl
 
 def apply_edge_detection(input_image, scaling_factor):
     return sobel_edge_detection(input_image, scaling_factor)
+
+def apply_unsharp_masking(input_image, kernel_size, sigma, k, padding_mode='reflect'):
+    return unsharp_masking(input_image, kernel_size, sigma, k, padding_mode='reflect')

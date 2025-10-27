@@ -6,7 +6,7 @@ from image_ops import (
     create_negative_image, add_images, subtract_images, multiply_images,
     log_transform, power_transform, connected_component_labeling,
     connected_component_labeling_m, apply_histogram_equalization,
-    apply_gaussian_smoothing, apply_edge_detection
+    apply_gaussian_smoothing, apply_edge_detection, apply_unsharp_masking
 )
 from image_data import update_output_image
 
@@ -183,11 +183,19 @@ def setup_gaussian_filter_panel(gaussian_filter_frame, inputLabel, outputImageLa
     gaussian_btn.pack(fill="x", pady=2)
 
     # Add separator between Gaussian and Sobel
-    separator = ttk.Separator(gaussian_frame, orient='horizontal')
-    separator.pack(fill='x', pady=10)
+    separator1 = ttk.Separator(gaussian_frame, orient='horizontal')
+    separator1.pack(fill='x', pady=10)
 
     # Sobel Edge Detection section
     setup_sobel_filter_panel(gaussian_frame, inputLabel, outputImageLabel)
+
+    # Add separator between Sobel and Unsharp Masking
+    separator2 = ttk.Separator(gaussian_frame, orient='horizontal')
+    separator2.pack(fill='x', pady=10)
+
+    # Unsharp Masking section
+    setup_unsharp_masking_panel(gaussian_frame, inputLabel, outputImageLabel,
+                               kernel_var, sigma_var, padding_var)
 
 
 def setup_sobel_filter_panel(parent_frame, inputLabel, outputImageLabel):
@@ -227,6 +235,62 @@ def setup_sobel_filter_panel(parent_frame, inputLabel, outputImageLabel):
     sobel_btn = tk.Button(sobel_frame, text="Apply Sobel Edge Detection",
                          command=apply_sobel_edge_detection, bg="lightgreen")
     sobel_btn.pack(fill="x", pady=2)
+
+
+def setup_unsharp_masking_panel(parent_frame, inputLabel, outputImageLabel, kernel_var, sigma_var, padding_var):
+    """Setup Unsharp Masking panel below Sobel edge detection"""
+    unsharp_frame = tk.Frame(parent_frame)
+    unsharp_frame.pack(fill="x", pady=(10, 5))
+
+    tk.Label(unsharp_frame, text="Unsharp Masking:", font=("Arial", 9, "bold")).pack(anchor="w")
+
+    # Unsharp Masking parameters frame
+    unsharp_param_frame = tk.Frame(unsharp_frame)
+    unsharp_param_frame.pack(fill="x", pady=2)
+
+    # Scaling factor k input
+    k_frame = tk.Frame(unsharp_param_frame)
+    k_frame.pack(fill="x")
+    tk.Label(k_frame, text="Scaling Factor k:").pack(side=tk.LEFT)
+    k_var = tk.StringVar(value="1.0")
+    k_entry = ttk.Entry(k_frame, textvariable=k_var, width=8)
+    k_entry.pack(side=tk.LEFT, padx=5)
+
+    # Info label explaining the parameters
+    info_label = tk.Label(unsharp_param_frame,
+                         text="Uses Gaussian params above for blurring",
+                         font=("Arial", 7), fg="gray")
+    info_label.pack(anchor="w", pady=(2, 0))
+
+    # Apply Unsharp Masking button
+    def apply_unsharp_masking_operation():
+        try:
+            kernel_size = int(kernel_var.get())
+            sigma = float(sigma_var.get())
+            padding_mode = padding_var.get()
+            k_value = float(k_var.get())
+
+            # Validate parameters
+            if kernel_size % 2 == 0:
+                raise ValueError("Kernel size must be odd")
+            if kernel_size < 3:
+                raise ValueError("Kernel size must be at least 3")
+            if sigma <= 0:
+                raise ValueError("Sigma must be positive")
+            if k_value <= 0:
+                raise ValueError("Scaling factor k must be positive")
+
+            result = apply_unsharp_masking(inputLabel.pil_image, kernel_size, sigma, k_value, padding_mode)
+            update_output_image(outputImageLabel, result)
+            print(f"Applied Unsharp Masking: N={kernel_size}, σ={sigma}, k={k_value}, padding={padding_mode}")
+        except ValueError as e:
+            print(f"Error in Unsharp Masking: {e}")
+        except Exception as e:
+            print(f"Unexpected error in Unsharp Masking: {e}")
+
+    unsharp_btn = tk.Button(unsharp_frame, text="Apply Unsharp Masking",
+                           command=apply_unsharp_masking_operation, bg="lightcoral")
+    unsharp_btn.pack(fill="x", pady=2)
 
 
 def setup_operations_panel(command_frame, inputLabel, inputLabel2, outputImageLabel):
