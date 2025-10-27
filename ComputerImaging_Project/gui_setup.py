@@ -182,6 +182,52 @@ def setup_gaussian_filter_panel(gaussian_filter_frame, inputLabel, outputImageLa
                              command=apply_gaussian_smoothing_operation, bg="lightblue")
     gaussian_btn.pack(fill="x", pady=2)
 
+    # Add separator between Gaussian and Sobel
+    separator = ttk.Separator(gaussian_frame, orient='horizontal')
+    separator.pack(fill='x', pady=10)
+
+    # Sobel Edge Detection section
+    setup_sobel_filter_panel(gaussian_frame, inputLabel, outputImageLabel)
+
+
+def setup_sobel_filter_panel(parent_frame, inputLabel, outputImageLabel):
+    """Setup Sobel edge detection panel below Gaussian filter"""
+    sobel_frame = tk.Frame(parent_frame)
+    sobel_frame.pack(fill="x", pady=(10, 5))
+
+    tk.Label(sobel_frame, text="Sobel Edge Detection:", font=("Arial", 9, "bold")).pack(anchor="w")
+
+    # Sobel parameters frame
+    sobel_param_frame = tk.Frame(sobel_frame)
+    sobel_param_frame.pack(fill="x", pady=2)
+
+    # Scaling factor input
+    scale_frame = tk.Frame(sobel_param_frame)
+    scale_frame.pack(fill="x")
+    tk.Label(scale_frame, text="Scaling Factor:").pack(side=tk.LEFT)
+    sobel_scale_var = tk.StringVar(value="1.0")
+    sobel_scale_entry = ttk.Entry(scale_frame, textvariable=sobel_scale_var, width=8)
+    sobel_scale_entry.pack(side=tk.LEFT, padx=5)
+
+    # Apply Sobel edge detection button
+    def apply_sobel_edge_detection():
+        try:
+            scaling_factor = float(sobel_scale_var.get())
+            if scaling_factor <= 0:
+                raise ValueError("Scaling factor must be positive")
+
+            result = apply_edge_detection(inputLabel.pil_image, scaling_factor)
+            update_output_image(outputImageLabel, result)
+            print(f"Applied Sobel Edge Detection with scaling factor={scaling_factor}")
+        except ValueError as e:
+            print(f"Error in Sobel Edge Detection: {e}")
+        except Exception as e:
+            print(f"Unexpected error in Sobel Edge Detection: {e}")
+
+    sobel_btn = tk.Button(sobel_frame, text="Apply Sobel Edge Detection",
+                         command=apply_sobel_edge_detection, bg="lightgreen")
+    sobel_btn.pack(fill="x", pady=2)
+
 
 def setup_operations_panel(command_frame, inputLabel, inputLabel2, outputImageLabel):
     ops_frame = tk.Frame(command_frame)
