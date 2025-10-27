@@ -4,7 +4,7 @@ from gui import load_image, save_output_image
 from image_ops import (
     create_negative_image, add_images, subtract_images, multiply_images,
     log_transform, power_transform, apply_histogram_equalization,
-    apply_gaussian_smoothing  # Add this import
+    apply_gaussian_smoothing, apply_edge_detection  # Add this import
 )
 
 
@@ -150,6 +150,28 @@ def execute_command(event=None, command_entry=None,
 
         except ValueError as e:
             print(f"Error in Gaussian blur parameters: {e}")
+            return
+    elif op == "sobel":  # Sobel edge detection command
+        if len(input_files) != 1:
+            print("Sobel edge detection requires exactly one input file")
+            return
+
+        # Parse optional scaling factor
+        scale_val = parse_command_args(tokens, "-scale")
+        scaling_factor = float(scale_val) if scale_val else 1.0
+
+        try:
+            # Validate scaling factor
+            if scaling_factor <= 0:
+                print("Error: Scaling factor must be positive")
+                return
+
+            # Apply Sobel edge detection
+            result = apply_edge_detection(input_pils[0], scaling_factor)
+            print(f"Applied Sobel edge detection with scaling factor={scaling_factor}")
+
+        except ValueError as e:
+            print(f"Error in Sobel parameters: {e}")
             return
     else:
         print(f"Unknown operation: {op}")
