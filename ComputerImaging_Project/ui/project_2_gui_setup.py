@@ -27,28 +27,28 @@ def init_project_2_gui(project_2_frame, input_label, output_image_label):
     # kernel size input
     kernel_frame = tk.Frame(gauss_param_frame)
     kernel_frame.pack(fill="x")
-    tk.Label(kernel_frame, text="Kernel Size:").pack(side=tk.LEFT)
+    tk.Label(kernel_frame, text="Kernel Size:").pack(side="left")
     kernel_var = tk.StringVar(value="5")
     kernel_entry = ttk.Entry(kernel_frame, textvariable=kernel_var, width=8)
-    kernel_entry.pack(side=tk.LEFT, padx=5)
+    kernel_entry.pack(side="left", padx=5)
 
     # sigma input
     sigma_frame = tk.Frame(gauss_param_frame)
     sigma_frame.pack(fill="x", pady=2)
-    tk.Label(sigma_frame, text="Sigma:").pack(side=tk.LEFT)
+    tk.Label(sigma_frame, text="Sigma:").pack(side="left")
     sigma_var = tk.StringVar(value="1.0")
     sigma_entry = ttk.Entry(sigma_frame, textvariable=sigma_var, width=8)
-    sigma_entry.pack(side=tk.LEFT, padx=5)
+    sigma_entry.pack(side="left", padx=5)
 
     # padding mode
     padding_frame = tk.Frame(gauss_param_frame)
     padding_frame.pack(fill="x", pady=2)
-    tk.Label(padding_frame, text="Padding:").pack(side=tk.LEFT)
+    tk.Label(padding_frame, text="Padding:").pack(side="left")
     padding_var = tk.StringVar(value="reflect")
     padding_combo = ttk.Combobox(padding_frame, textvariable=padding_var,
                                  values=["reflect", "constant", "nearest"],
                                  width=10, state="readonly")
-    padding_combo.pack(side=tk.LEFT, padx=5)
+    padding_combo.pack(side="left", padx=5)
 
     return kernel_var, sigma_var, padding_var
 
@@ -90,10 +90,10 @@ def setup_sobel_filter_panel(parent_frame, input_label, output_image_label):
     # scaling factor input
     scale_frame = tk.Frame(sobel_param_frame)
     scale_frame.pack(fill="x")
-    tk.Label(scale_frame, text="Scaling Factor:").pack(side=tk.LEFT)
+    tk.Label(scale_frame, text="Scaling Factor:").pack(side="left")
     sobel_scale_var = tk.StringVar(value="1.0")
     sobel_scale_entry = ttk.Entry(scale_frame, textvariable=sobel_scale_var, width=8)
-    sobel_scale_entry.pack(side=tk.LEFT, padx=5)
+    sobel_scale_entry.pack(side="left", padx=5)
 
     # apply Sobel edge detection button
     def apply_sobel_edge_detection():
@@ -127,10 +127,10 @@ def setup_unsharp_masking_panel(parent_frame, input_label, output_image_label, k
     # scaling factor k input
     k_frame = tk.Frame(unsharp_param_frame)
     k_frame.pack(fill="x")
-    tk.Label(k_frame, text="Scaling Factor k:").pack(side=tk.LEFT)
+    tk.Label(k_frame, text="Scaling Factor k:").pack(side="left")
     k_var = tk.StringVar(value="1.0")
     k_entry = ttk.Entry(k_frame, textvariable=k_var, width=8)
-    k_entry.pack(side=tk.LEFT, padx=5)
+    k_entry.pack(side="left", padx=5)
 
     # info label explaining the parameters
     info_label = tk.Label(unsharp_param_frame,text="Uses Gaussian params above for blurring",font=("Arial", 7), fg="gray")

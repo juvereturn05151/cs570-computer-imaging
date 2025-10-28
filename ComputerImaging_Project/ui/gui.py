@@ -9,7 +9,7 @@ from PIL import Image
 
 from image_data import get_ppm_maxvalue, ImageData
 
-def select_image(image_name, image_label, output_image_label, input_image_data, output_image_frame):
+def select_image(image_name, image_label, input_image_data):
     """Update input image"""
     img_data = input_image_data[image_name]
     image_label.config(image=img_data.tk)
@@ -17,30 +17,13 @@ def select_image(image_name, image_label, output_image_label, input_image_data, 
     image_label.original_pil = img_data.pil
     image_label.pil_image = img_data.pil
 
-def select_image2(image_name, input_image_label, input_image_data):
-    """Update input 2nd image"""
-    img_data = input_image_data[image_name]
-    input_image_label.config(image=img_data.tk)
-    input_image_label.tk_image = img_data.tk
-    input_image_label.original_pil = img_data.pil
-    input_image_label.pil_image = img_data.pil
-
-def on_tree_select(event, tree_view, input_image_label, output_image_label, input_image_data, output_image_data):
-    """Update an input image when select from the 1st tree"""
+def on_tree_select(event, tree_view, input_image_label, input_image_data):
+    """Update an input image when select from the tree"""
     selected_item = tree_view.focus()
     item_details = tree_view.item(selected_item)
     item_text = item_details['text']
     if item_text in input_image_data:
-        select_image(item_text, input_image_label, output_image_label, input_image_data, output_image_data)
-
-def on_tree_select2(event, tree_view, input_image_label, input_image_data):
-    """Update an input image when select from the 2nd tree"""
-    selected_item = tree_view.focus()
-    item_details = tree_view.item(selected_item)
-    item_text = item_details['text']
-    if item_text in input_image_data:
-        select_image2(item_text, input_image_label, input_image_data)
-
+        select_image(item_text, input_image_label, input_image_data)
 
 def load_image(load_file_name, input_image_data, tree_view=None, root_id=None):
     pil_image = Image.open(load_file_name)

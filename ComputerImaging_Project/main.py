@@ -10,7 +10,7 @@ import os
 
 from ui.gui_setup import setup_frames, setup_treeview, setup_image_labels, setup_command_interface, setup_interpolation_options, setup_project_1_operations_panel, setup_project_2_filter_panel
 from image_data import load_default_images, load_output_images, copy_images
-from utils.events import bind_events, setup_window_resize_monitor, bind_events2
+from utils.events import bind_events, setup_window_resize_monitor
 
 ORIGIN_PATH = os.path.join(os.getcwd(), "data")
 
@@ -55,8 +55,8 @@ def main():
     interpolation_var = setup_interpolation_options(command_frame)
 
     # bind event handlers to widgets
-    bind_events(tree_view, input_image_label, output_image_label, input_image_data, output_image_data)
-    bind_events2(tree_view2, input_image_label2, input_image_data2)
+    bind_events(tree_view, input_image_label, input_image_data)
+    bind_events(tree_view2, input_image_label2, input_image_data2)
 
     # setup window resize monitoring
     setup_window_resize_monitor(root, interpolation_var, input_image_label, input_image_label2, output_image_label)

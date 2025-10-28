@@ -25,13 +25,13 @@ def init_project_1_gui(ops_frame):
     gamma_var = tk.DoubleVar(value=1.0)
 
     # parameter input widgets
-    tk.Label(param_frame, text="c:").pack(side=tk.LEFT, padx=2)
+    tk.Label(param_frame, text="c:").pack(side="left", padx=2)
     c_entry = ttk.Entry(param_frame, textvariable=c_var, width=6)
-    c_entry.pack(side=tk.LEFT, padx=2)
+    c_entry.pack(side="left", padx=2)
 
-    tk.Label(param_frame, text="γ:").pack(side=tk.LEFT, padx=2)
+    tk.Label(param_frame, text="γ:").pack(side="left", padx=2)
     gamma_entry = ttk.Entry(param_frame, textvariable=gamma_var, width=6)
-    gamma_entry.pack(side=tk.LEFT, padx=2)
+    gamma_entry.pack(side="left", padx=2)
 
     return  c_var, gamma_var
 
@@ -68,6 +68,6 @@ def setup_connected_component_labeling(ops_frame, input_label, output_image_labe
 
     connected_labeling_frame = tk.Frame(connected_labeling_frame)
     connected_labeling_frame.pack(fill="x")
-    tk.Button(connected_labeling_frame, text="4-Connected", command=lambda: update_output_image(output_image_label,connected_component_labeling(input_label,4))).pack(side=tk.LEFT, fill="x", expand=True, padx=2)
-    tk.Button(connected_labeling_frame, text="8-Connected", command=lambda: update_output_image(output_image_label,connected_component_labeling(input_label,8))).pack(side=tk.LEFT, fill="x", expand=True, padx=2)
-    tk.Button(connected_labeling_frame, text="M-Connected", command=lambda: update_output_image(output_image_label,connected_component_labeling_m(input_label))).pack(side=tk.LEFT, fill="x", expand=True, padx=2)
+    tk.Button(connected_labeling_frame, text="4-Connected", command=lambda: update_output_image(output_image_label,connected_component_labeling(input_label,4))).pack(side="left", fill="x", expand=True, padx=2)
+    tk.Button(connected_labeling_frame, text="8-Connected", command=lambda: update_output_image(output_image_label,connected_component_labeling(input_label,8))).pack(side="left", fill="x", expand=True, padx=2)
+    tk.Button(connected_labeling_frame, text="M-Connected", command=lambda: update_output_image(output_image_label,connected_component_labeling_m(input_label))).pack(side="left", fill="x", expand=True, padx=2)

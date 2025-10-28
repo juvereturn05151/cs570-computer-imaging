@@ -30,20 +30,20 @@ def setup_frames(root):
     output_image_frame = tk.Frame(top_frame)
     command_frame = tk.Frame(root)
 
-    top_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-    operation_frame.pack(side=tk.LEFT, fill=tk.Y)
-    operation_frame2.pack(side=tk.LEFT, fill=tk.Y)
-    input_image_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    top_frame.pack(side="top", fill="both", expand=True)
+    operation_frame.pack(side="left", fill="y")
+    operation_frame2.pack(side="left", fill="y")
+    input_image_frame.pack(side="left", fill="both", expand=True)
     input_image_frame.pack_propagate(False)
-    input_image_frame2.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    input_image_frame2.pack(side="left", fill="both", expand=True)
     input_image_frame2.pack_propagate(False)
-    output_image_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+    output_image_frame.pack(side="right", fill="both", expand=True)
     output_image_frame.pack_propagate(False)
 
     project_2_filter_frame = tk.Frame(command_frame)
-    project_2_filter_frame.pack(side=tk.RIGHT, fill=tk.Y)
+    project_2_filter_frame.pack(side="right", fill="y")
 
-    command_frame.pack(side=tk.BOTTOM, fill=tk.X)
+    command_frame.pack(side="bottom", fill="x")
 
     return (top_frame, project_2_filter_frame, operation_frame, operation_frame2,
             input_image_frame, input_image_frame2, output_image_frame, command_frame)
@@ -98,15 +98,15 @@ def setup_command_interface(command_frame, input_image_data, tree_view, root_id,
     # show current path at the top
     current_path = os.getcwd()
     path_label = tk.Label(command_frame, text=f"Current Path: {current_path}", anchor="w", fg="blue")
-    path_label.pack(side=tk.TOP, fill=tk.X, padx=5, pady=2)
+    path_label.pack(side="top", fill="x", padx=5, pady=2)
 
     # execute command label
     command_label = tk.Label(command_frame, text="Execute command:")
-    command_label.pack(side=tk.LEFT, padx=5, pady=5)
+    command_label.pack(side="left", padx=5, pady=5)
 
     # command entry
     command_entry = ttk.Entry(command_frame)
-    command_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5, pady=5)
+    command_entry.pack(side="left", fill="x", expand=True, padx=5, pady=5)
 
     # binding with "Enter" button
     command_entry.bind( "<Return>", lambda e: execute_command(e, command_entry, input_image_data, tree_view, root_id, output_image_label,path_label))
@@ -115,7 +115,7 @@ def setup_interpolation_options(command_frame):
     """Create interpolation radio buttons when the images change their sizes due to either expanding and shrinking the window"""
     interpolation_var = tk.StringVar(value="nearest")
     interp_frame = tk.Frame(command_frame)
-    interp_frame.pack(side=tk.LEFT, padx=10, pady=5)
+    interp_frame.pack(side="left", padx=10, pady=5)
     tk.Label(interp_frame, text="Interpolation:").pack(anchor="w")
     tk.Radiobutton(interp_frame, text="Nearest Neighbor", variable=interpolation_var, value="nearest").pack(anchor="w")
     tk.Radiobutton(interp_frame, text="Bilinear", variable=interpolation_var, value="bilinear").pack(anchor="w")
@@ -124,7 +124,7 @@ def setup_interpolation_options(command_frame):
 def setup_project_1_operations_panel(command_frame, input_label, input_label2, output_image_label):
     """Create and configure the project 1 panel widget for various operations"""
     ops_frame = tk.Frame(command_frame)
-    ops_frame.pack(side=tk.LEFT, padx=10, pady=5)
+    ops_frame.pack(side="left", padx=10, pady=5)
 
     c_var, gamma_var = init_project_1_gui(ops_frame)
 

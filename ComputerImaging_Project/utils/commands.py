@@ -102,7 +102,7 @@ def execute_command(event=None, command_entry=None, image_data=None, tree_view=N
 
     max_val = get_max_value(input_pils[0])
 
-    # Handle multiple operations and filters
+    # handle multiple operations and filters
     if op == "add":
         result = add_images(input_pils[0], input_pils[1], max_val)
     elif op == "sub":
@@ -118,17 +118,20 @@ def execute_command(event=None, command_entry=None, image_data=None, tree_view=N
         c_val = float(parse_command_args(tokens, "-c") or 1.0)
         gamma_val = float(parse_command_args(tokens, "-gamma") or 1.0)
         result = power_transform(input_pils[0], max_val, gamma=gamma_val, c=c_val)
-    elif op == "histeq":  # Histogram equalization command
+    # histogram equalization command
+    elif op == "histeq":
         if len(input_files) != 1:
             print("Histogram equalization requires exactly one input file")
             return
         result = apply_histogram_equalization(input_pils[0], max_val)
+
+    # gaussian blur command
     elif op == "gblur":  # Gaussian blur command
         if len(input_files) != 1:
             print("Gaussian blur requires exactly one input file")
             return
 
-        # Parse Gaussian blur parameters
+        # parse Gaussian blur parameters
         n_val = parse_command_args(tokens, "-N")
         sigma_val = parse_command_args(tokens, "-sigma")
 
@@ -146,46 +149,49 @@ def execute_command(event=None, command_entry=None, image_data=None, tree_view=N
             if not validate_gaussian_smoothing_input_variables(kernel_size, sigma):
                 return
 
-            # Apply Gaussian blur with default padding mode
+            # apply Gaussian blur with default padding mode
             result = apply_gaussian_smoothing(input_pils[0], kernel_size, sigma, 'reflect', get_max_value(input_pils[0]))
             print(f"Applied Gaussian blur: N={kernel_size}, σ={sigma}")
 
         except ValueError as e:
             print(f"Error in Gaussian blur parameters: {e}")
             return
-    elif op == "sobel":  # Sobel edge detection command
+    # sobel edge detection command
+    elif op == "sobel":
         if len(input_files) != 1:
             print("Sobel edge detection requires exactly one input file")
             return
 
-        # Parse optional scaling factor
+        # parse optional scaling factor
         scale_val = parse_command_args(tokens, "-scale")
         scaling_factor = float(scale_val) if scale_val else 1.0
 
         try:
-            # Validate scaling factor
+            # validate scaling factor
             if scaling_factor <= 0:
                 print("Error: Scaling factor must be positive")
                 return
 
-            # Apply Sobel edge detection
+            # apply Sobel edge detection
             result = apply_edge_detection(input_pils[0], scaling_factor)
             print(f"Applied Sobel edge detection with scaling factor={scaling_factor}")
 
         except ValueError as e:
             print(f"Error in Sobel parameters: {e}")
             return
-    elif op == "unsharp":  # Unsharp masking command
+
+    # unsharp masking command
+    elif op == "unsharp":
         if len(input_files) != 1:
             print("Unsharp masking requires exactly one input file")
             return
 
-        # Parse unsharp masking parameters
+        # parse unsharp masking parameters
         n_val = parse_command_args(tokens, "-N")
         sigma_val = parse_command_args(tokens, "-sigma")
         k_val = parse_command_args(tokens, "-k")
 
-        # Set defaults if not provided
+        # set defaults if not provided
         kernel_size = int(n_val) if n_val else 5
         sigma = float(sigma_val) if sigma_val else 1.0
         k = float(k_val) if k_val else 1.0
@@ -206,12 +212,12 @@ def execute_command(event=None, command_entry=None, image_data=None, tree_view=N
         print(f"Unknown operation: {op}")
         return
 
-    #save result to file
+    # save result to file
     output_path = os.path.join(os.getcwd(), output_file)
     result.save(output_path)
     print(f"{op.upper()} operation complete. Saved as {output_file}")
 
-    #update the output panel with the result
+    # update the output panel with the result
     if output_image_label:
         update_output_image(output_image_label, result)
         print(f"Output panel updated with {output_file}")
