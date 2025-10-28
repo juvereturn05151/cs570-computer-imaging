@@ -8,7 +8,6 @@ import tkinter as tk
 from tkinter import ttk
 
 from images_ops.image_ops import (
-    create_negative_image, add_images, subtract_images, multiply_images,
     log_transform, power_transform, connected_component_labeling,
     connected_component_labeling_m,
 )
@@ -34,9 +33,6 @@ def init_project_1_gui(ops_frame):
     gamma_entry = ttk.Entry(param_frame, textvariable=gamma_var, width=6)
     gamma_entry.pack(side=tk.LEFT, padx=2)
 
-    update_param_btn = tk.Button(param_frame, text="Update Params", command=lambda: update_parameters(c_var, gamma_var))
-    update_param_btn.pack(side=tk.LEFT, padx=5)
-
     return  c_var, gamma_var
 
 def update_parameters(c_var, gamma_var):
@@ -54,10 +50,10 @@ def update_parameters(c_var, gamma_var):
 
     return  current_c, current_gamma
 
-def setup_log_transform_panel(ops_frame, input_label, output_image_label, max_val, current_c):
+def setup_log_transform_panel(ops_frame, input_label, output_image_label, max_val, c_var):
     def execute_log_transform():
         try:
-            c_value = current_c.get()
+            c_value = c_var.get()
             result = log_transform(input_label.pil_image, max_val, c_value)
             update_output_image(output_image_label, result)
             print(f"Applied Log Transform with c={c_value}")
@@ -66,12 +62,12 @@ def setup_log_transform_panel(ops_frame, input_label, output_image_label, max_va
 
     tk.Button(ops_frame, text="Log Transform", command=execute_log_transform).pack(fill="x")
 
-def setup_power_transform_panel(ops_frame, input_label, output_image_label, max_val, current_c, current_gamma):
+def setup_power_transform_panel(ops_frame, input_label, output_image_label, max_val, c_var, gamma_var):
     # power transform with parameters
     def execute_power_transform():
         try:
-            c_value = current_c.get()
-            gamma_value = current_gamma.get()
+            c_value = c_var.get()  
+            gamma_value = gamma_var.get()
             result = power_transform(input_label.pil_image, max_val, gamma_value, c_value)
             update_output_image(output_image_label, result)
             print(f"Applied Power Transform with γ={gamma_value}, c={c_value}")

@@ -8,10 +8,8 @@ import numpy as np
 from PIL import Image
 
 def sobel_edge_detection(input_image, scaling_factor=1.0):
-    if not isinstance(input_image, Image.Image):
-        raise ValueError("Input must be a PIL Image object")
 
-    # Convert to grayscale if needed
+
     if input_image.mode != 'L':
         input_image = input_image.convert('L')
 

@@ -64,8 +64,8 @@ def setup_image_labels(input_image_frame, input_image_frame2, output_image_frame
         raise ValueError(f"Default image '{default_name}' not found in imageData")
 
     # setup input image
-    pil_input = input_image_data[default_name]["pil"]
-    tk_input = input_image_data[default_name]["tk"]
+    pil_input = input_image_data[default_name].pil
+    tk_input = input_image_data[default_name].tk
     input_label = tk.Label(input_image_frame, image=tk_input)
     input_label.pack(padx=10, pady=10)
     input_label.original_pil = pil_input
@@ -73,8 +73,8 @@ def setup_image_labels(input_image_frame, input_image_frame2, output_image_frame
     input_label.tk_image = tk_input
 
     # setup input image2
-    pil_input = input_image_data2[default_name]["pil"]
-    tk_input = input_image_data2[default_name]["tk"]
+    pil_input = input_image_data2[default_name].pil
+    tk_input = input_image_data2[default_name].tk
     input_label2 = tk.Label(input_image_frame2, image=tk_input)
     input_label2.pack(padx=10, pady=10)
     input_label2.original_pil = pil_input
@@ -82,8 +82,8 @@ def setup_image_labels(input_image_frame, input_image_frame2, output_image_frame
     input_label2.tk_image = tk_input
 
     # setup output image
-    pil_output = output_image_data[default_name]["pil"]
-    tk_output = output_image_data[default_name]["tk"]
+    pil_output = output_image_data[default_name].pil
+    tk_output = output_image_data[default_name].tk
     output_label = tk.Label(output_image_frame, image=tk_output)
     output_label.pack(padx=10, pady=10)
     output_label.original_pil = pil_output
@@ -121,7 +121,41 @@ def setup_interpolation_options(command_frame):
     tk.Radiobutton(interp_frame, text="Bilinear", variable=interpolation_var, value="bilinear").pack(anchor="w")
     return interpolation_var
 
+def setup_project_1_operations_panel(command_frame, input_label, input_label2, output_image_label):
+    """Create and configure the project 1 panel widget for various operations"""
+    ops_frame = tk.Frame(command_frame)
+    ops_frame.pack(side=tk.LEFT, padx=10, pady=5)
+
+    c_var, gamma_var = init_project_1_gui(ops_frame)
+
+    # Remove this line - we don't need update_parameters anymore
+    # current_c, current_gamma = update_parameters(c_var, gamma_var)
+
+    max_val = getattr(input_label, "max_val", 255)
+
+    tk.Button(ops_frame, text="Negative", command=lambda: update_output_image(output_image_label, create_negative_image(input_label.pil_image, max_val))).pack(fill="x")
+    tk.Button(ops_frame, text="Addition", command=lambda: update_output_image(output_image_label,add_images(input_label.pil_image,input_label2.pil_image,max_val))).pack(fill="x")
+    tk.Button(ops_frame, text="Subtraction", command=lambda: update_output_image(output_image_label,subtract_images(input_label.pil_image,input_label2.pil_image,max_val))).pack(fill="x")
+    tk.Button(ops_frame, text="Product", command=lambda: update_output_image(output_image_label,multiply_images(input_label.pil_image,input_label2.pil_image,max_val))).pack(fill="x")
+
+    # Pass c_var and gamma_var directly
+    setup_log_transform_panel(ops_frame, input_label, output_image_label, max_val, c_var)
+
+    setup_power_transform_panel(ops_frame, input_label, output_image_label, max_val, c_var, gamma_var)
+
+    tk.Button(ops_frame, text="Update Input Image w/ Output Image",command=lambda: update_output_image(input_label, output_image_label.pil_image)).pack(fill="x")
+
+    # row2: connected labeling operations
+    setup_connected_component_labeling(ops_frame, input_label, output_image_label)
+
+    # add tooltips or information labels
+    info_label = tk.Label(ops_frame, text="Enter c and γ values, then click transform buttons", font=("Arial", 8), fg="gray")
+    info_label.pack(anchor="w", pady=(5, 0))
+
+    return ops_frame
+
 def setup_project_2_filter_panel(project_2_filter_frame, input_label, output_image_label):
+    """Create and configure the project 2 panel widget for various filtering operations"""
     project_2_frame = tk.Frame(project_2_filter_frame)
     project_2_frame.pack(fill="x", pady=(10, 5))
 
@@ -142,34 +176,3 @@ def setup_project_2_filter_panel(project_2_filter_frame, input_label, output_ima
 
     # unsharp Masking section
     setup_unsharp_masking_panel(project_2_frame, input_label, output_image_label, kernel_var, sigma_var, padding_var)
-
-def setup_project_1_operations_panel(command_frame, input_label, inputLabel2, output_image_label):
-    ops_frame = tk.Frame(command_frame)
-    ops_frame.pack(side=tk.LEFT, padx=10, pady=5)
-
-    c_var, gamma_var = init_project_1_gui(ops_frame)
-
-    # store current parameters for operations
-    current_c, current_gamma = update_parameters(c_var, gamma_var)
-
-    max_val = getattr(input_label, "max_val", 255)
-
-    tk.Button(ops_frame, text="Negative", command=lambda: update_output_image(output_image_label, create_negative_image(input_label.pil_image, max_val))).pack(fill="x")
-    tk.Button(ops_frame, text="Addition", command=lambda: update_output_image(output_image_label,add_images(input_label.pil_image,inputLabel2.pil_image,max_val))).pack(fill="x")
-    tk.Button(ops_frame, text="Subtraction", command=lambda: update_output_image(output_image_label,subtract_images(input_label.pil_image,inputLabel2.pil_image,max_val))).pack(fill="x")
-    tk.Button(ops_frame, text="Product", command=lambda: update_output_image(output_image_label,multiply_images(input_label.pil_image,inputLabel2.pil_image,max_val))).pack(fill="x")
-
-    setup_log_transform_panel(ops_frame, input_label, output_image_label, max_val, current_c)
-
-    setup_power_transform_panel(ops_frame, input_label, output_image_label, max_val, current_c, current_gamma)
-
-    tk.Button(ops_frame, text="Update Input Image w/ Output Image",command=lambda: update_output_image(input_label, output_image_label.pil_image)).pack(fill="x")
-
-    # row2: connected labeling operations
-    setup_connected_component_labeling(ops_frame, input_label, output_image_label)
-
-    # add tooltips or information labels
-    info_label = tk.Label(ops_frame, text="Set c and γ values above, then click transform buttons", font=("Arial", 8), fg="gray")
-    info_label.pack(anchor="w", pady=(5, 0))
-
-    return ops_frame

@@ -8,7 +8,7 @@ from collections import deque
 import numpy as np
 from PIL import Image
 
-# Predefined 20 colors
+# predefined 20 colors
 COLORS = [
     (255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0),
     (255, 0, 255), (0, 255, 255), (128, 0, 0), (0, 128, 0),
@@ -79,14 +79,14 @@ def connected_component_label_m(inputLabel):
                 labels[y, x] = current_label
                 while queue:
                     cy, cx = queue.popleft()
-                    #check 4-connected
+                    # check 4-connected
                     for dy, dx in neighbors_4:
                         ny, nx = cy + dy, cx + dx
                         if 0 <= ny < h and 0 <= nx < w:
                             if binary[ny, nx] and labels[ny, nx] == 0:
                                 labels[ny, nx] = current_label
                                 queue.append((ny, nx))
-                    #then check diagonals
+                    # then check diagonals
                     for dy, dx in neighbors_diag:
                         ny, nx = cy + dy, cx + dx
                         if 0 <= ny < h and 0 <= nx < w:

@@ -83,18 +83,33 @@ def billinear_interpolation(pil_image, new_width, new_height):
     return billinear_interpolation_resize(pil_image, new_width, new_height)
 
 def apply_histogram_equalization(input_image, maxval=255):
+    if not isinstance(input_image, Image.Image):
+        raise ValueError("Input must be a PIL Image object")
+
     result, fig = histogram_equalization(input_image, maxval, plot_histogram=True)
     return result
 
 def apply_histogram_equalization_opencv(input_image, maxval=255):
+    if not isinstance(input_image, Image.Image):
+        raise ValueError("Input must be a PIL Image object")
+
     result, fig = histogram_equalization_opencv(input_image, maxval, plot_histogram=True)
     return result
 
 def apply_gaussian_smoothing(input_image, kernel_size, sigma, padding_mode='reflect'):
+    if not isinstance(input_image, Image.Image):
+        raise ValueError("Input must be a PIL Image object")
+
     return gaussian_smoothing(input_image, kernel_size, sigma, padding_mode)
 
 def apply_edge_detection(input_image, scaling_factor):
+    if not isinstance(input_image, Image.Image):
+        raise ValueError("Input must be a PIL Image object")
+
     return sobel_edge_detection(input_image, scaling_factor)
 
 def apply_unsharp_masking(input_image, kernel_size, sigma, k, padding_mode='reflect'):
-    return unsharp_masking(input_image, kernel_size, sigma, k, padding_mode='reflect')
+    if not isinstance(input_image, Image.Image):
+        raise ValueError("Input must be a PIL Image object")
+
+    return unsharp_masking(input_image, kernel_size, sigma, k, padding_mode)

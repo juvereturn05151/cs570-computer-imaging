@@ -4,76 +4,74 @@ Author(s):    Ju-ve Chankasemporn
 Copyright:    (c) 2025 DigiPen Institute of Technology. All rights reserved.
 """
 
-from image_data import get_ppm_maxvalue
+import os
+from PIL import Image
 
-def select_image(imageName, imageLabel, outputImageLabel, imageData, output_image_frame):
-    # Update input image
-    pil_input = imageData[imageName]["pil"]
-    tk_input = imageData[imageName]["tk"]
-    imageLabel.config(image=tk_input)
-    imageLabel.tk_image = tk_input
-    imageLabel.original_pil = pil_input
-    imageLabel.pil_image = pil_input
+from image_data import get_ppm_maxvalue, ImageData
 
-def select_image2(imageName, imageLabel, imageData):
-    pil_input = imageData[imageName]["pil"]
-    tk_input = imageData[imageName]["tk"]
-    imageLabel.config(image=tk_input)
-    imageLabel.tk_image = tk_input
-    imageLabel.original_pil = pil_input
-    imageLabel.pil_image = pil_input
+def select_image(image_name, image_label, output_image_label, input_image_data, output_image_frame):
+    """Update input image"""
+    img_data = input_image_data[image_name]
+    image_label.config(image=img_data.tk)
+    image_label.tk_image = img_data.tk
+    image_label.original_pil = img_data.pil
+    image_label.pil_image = img_data.pil
 
-def on_tree_select(event, treeView, imageLabel, outputImageLabel, input_image_data, output_image_data):
-    selectedItem = treeView.focus()
-    itemDetails = treeView.item(selectedItem)
-    itemText = itemDetails['text']
-    if itemText in input_image_data.keys():
-        select_image(itemText, imageLabel, outputImageLabel, input_image_data, output_image_data)
+def select_image2(image_name, input_image_label, input_image_data):
+    """Update input 2nd image"""
+    img_data = input_image_data[image_name]
+    input_image_label.config(image=img_data.tk)
+    input_image_label.tk_image = img_data.tk
+    input_image_label.original_pil = img_data.pil
+    input_image_label.pil_image = img_data.pil
 
-def on_tree_select2(event, treeView, imageLabel, input_image_data):
-    selectedItem = treeView.focus()
-    itemDetails = treeView.item(selectedItem)
-    itemText = itemDetails['text']
-    if itemText in input_image_data.keys():
-        select_image2(itemText, imageLabel, input_image_data)
+def on_tree_select(event, tree_view, input_image_label, output_image_label, input_image_data, output_image_data):
+    """Update an input image when select from the 1st tree"""
+    selected_item = tree_view.focus()
+    item_details = tree_view.item(selected_item)
+    item_text = item_details['text']
+    if item_text in input_image_data:
+        select_image(item_text, input_image_label, output_image_label, input_image_data, output_image_data)
+
+def on_tree_select2(event, tree_view, input_image_label, input_image_data):
+    """Update an input image when select from the 2nd tree"""
+    selected_item = tree_view.focus()
+    item_details = tree_view.item(selected_item)
+    item_text = item_details['text']
+    if item_text in input_image_data:
+        select_image2(item_text, input_image_label, input_image_data)
 
 
-def load_image(loadFilename, imageData, treeView=None, rootIID=None):
-    import os
-    from PIL import Image, ImageTk
+def load_image(load_file_name, input_image_data, tree_view=None, root_id=None):
+    pil_image = Image.open(load_file_name)
+    name = os.path.basename(load_file_name)
 
-    pil_image = Image.open( loadFilename)
-    tk_image = ImageTk.PhotoImage(pil_image)
-    name = os.path.basename(loadFilename)
-
-    # Get max_val for PPM (you already have a helper function get_ppm_maxvalue)
+    # get max_val for PPM
     try:
-        max_val = get_ppm_maxvalue('data/' + loadFilename)
+        max_val = get_ppm_maxvalue('data/' + load_file_name)
     except Exception:
-        max_val = None  # fallback if not a PPM or error occurs
+        # default fallback for non-PPM images
+        max_val = 255
+        
+    # store using ImageData class
+    input_image_data[name] = ImageData(pil_image, max_val)
 
-    # Store in same structure as load_default_images
-    imageData[name] = {
-        "pil": pil_image,
-        "tk": tk_image,
-        "max_val": max_val,
-    }
+    # insert into TreeView if provided
+    if tree_view is not None and root_id is not None:
+        tree_view.insert(root_id, -1, text=name)
 
-    # Insert into TreeView if provided
-    if treeView is not None and rootIID is not None:
-        treeView.insert(rootIID, -1, text=name)
-
-def save_output_image(fileName, outputImageLabel):
-    # Check if we have a PIL image stored
-    if hasattr(outputImageLabel, 'pil_image') is not None:
+def save_output_image(file_name, output_image_label):
+    """Check if we have a PIL image stored"""
+    if not hasattr(output_image_label, 'pil_image'):
         print("No OutputImage")
+        return
 
-    if hasattr(outputImageLabel, 'pil_image') and outputImageLabel.pil_image:
-        if not fileName.endswith('.ppm'):
-            fileName += '.ppm'
-            print(f"Added .ppm extension. Saving as: {fileName}")
+    if output_image_label.pil_image:
+        if not file_name.endswith('.ppm'):
+            file_name += '.ppm'
+            print(f"Added .ppm extension. Saving as: {file_name}")
 
-        outputImageLabel.pil_image.save(fileName)
-        print(f"Image saved to save_images/{fileName}")
+        output_image_label.pil_image.save(file_name)
+        print(f"Image saved to save_images/{file_name}")
     else:
         print("No output image to save")

@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import cv2
 
 def histogram_equalizer(input_image, maxval=255):
-    # setup
+    # convert PIL to numpy array
     if input_image.mode != 'L':
         input_image = input_image.convert('L')
     img_array = np.array(input_image)
@@ -35,12 +35,10 @@ def histogram_equalizer(input_image, maxval=255):
 
 
 def plot_histograms(original_hist, equalized_hist, bins, maxval=255):
-    """
-    Plot original and equalized histograms side by side
-    """
+    """Plot original and equalized histograms side by side"""
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
 
-    # Plot original histogram
+    # plot original histogram
     ax1.bar(bins[:-1], original_hist, width=1, alpha=0.7, color='blue')
     ax1.set_title('Original Image Histogram')
     ax1.set_xlabel('Pixel Intensity')
@@ -48,7 +46,7 @@ def plot_histograms(original_hist, equalized_hist, bins, maxval=255):
     ax1.set_xlim(0, maxval)
     ax1.grid(True, alpha=0.3)
 
-    # Plot equalized histogram
+    # plot equalized histogram
     ax2.bar(bins[:-1], equalized_hist, width=1, alpha=0.7, color='red')
     ax2.set_title('Equalized Image Histogram')
     ax2.set_xlabel('Pixel Intensity')
@@ -61,10 +59,10 @@ def plot_histograms(original_hist, equalized_hist, bins, maxval=255):
 
 
 def histogram_equalization(input_image, maxval=255, plot_histogram=True):
-    # Apply histogram equalization
+    # apply histogram equalization
     equalized_image, original_hist, bins = histogram_equalizer(input_image, maxval)
 
-    # Calculate histogram of equalized image
+    # calculate histogram of equalized image
     equalized_array = np.array(equalized_image)
     equalized_hist, _ = np.histogram(equalized_array.flatten(), bins=maxval + 1, range=[0, maxval])
 
@@ -76,21 +74,19 @@ def histogram_equalization(input_image, maxval=255, plot_histogram=True):
     return equalized_image, fig
 
 def histogram_equalization_opencv(input_image, maxval=255, plot_histogram=True):
-    """
-    Histogram equalization using OpenCV for comparison
-    """
-    # Convert PIL to numpy array
+    """Histogram equalization using OpenCV for comparison"""
+    # convert PIL to numpy array
     if input_image.mode != 'L':
         input_image = input_image.convert('L')
     img_array = np.array(input_image)
 
-    # Apply OpenCV histogram equalization
+    # apply OpenCV histogram equalization
     equalized_array = cv2.equalizeHist(img_array)
 
-    # Convert back to PIL
+    # convert back to PIL
     equalized_image = Image.fromarray(equalized_array)
 
-    # Calculate histograms for plotting
+    # calculate histograms for plotting
     original_hist, bins = np.histogram(img_array.flatten(), bins=maxval + 1, range=[0, maxval])
     equalized_hist, _ = np.histogram(equalized_array.flatten(), bins=maxval + 1, range=[0, maxval])
 
@@ -98,7 +94,7 @@ def histogram_equalization_opencv(input_image, maxval=255, plot_histogram=True):
     if plot_histogram:
         fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(15, 4))
 
-        # Plot original histogram
+        # plot original histogram
         ax1.bar(bins[:-1], original_hist, width=1, alpha=0.7, color='blue')
         ax1.set_title('Original Image Histogram')
         ax1.set_xlabel('Pixel Intensity')
@@ -106,7 +102,7 @@ def histogram_equalization_opencv(input_image, maxval=255, plot_histogram=True):
         ax1.set_xlim(0, maxval)
         ax1.grid(True, alpha=0.3)
 
-        # Plot custom equalized histogram
+        # plot custom equalized histogram
         custom_equalized, _, _ = histogram_equalizer(input_image, maxval)
         custom_array = np.array(custom_equalized)
         custom_hist, _ = np.histogram(custom_array.flatten(), bins=maxval + 1, range=[0, maxval])
@@ -117,7 +113,7 @@ def histogram_equalization_opencv(input_image, maxval=255, plot_histogram=True):
         ax2.set_xlim(0, maxval)
         ax2.grid(True, alpha=0.3)
 
-        # Plot OpenCV equalized histogram
+        # plot OpenCV equalized histogram
         ax3.bar(bins[:-1], equalized_hist, width=1, alpha=0.7, color='red')
         ax3.set_title('OpenCV Equalized Histogram')
         ax3.set_xlabel('Pixel Intensity')
