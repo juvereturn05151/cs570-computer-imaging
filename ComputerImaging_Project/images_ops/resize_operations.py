@@ -1,5 +1,5 @@
 """
-File Name:    unsharp_masking.py
+File Name:    resize_operations.py
 Author(s):    Ju-ve Chankasemporn
 Copyright:    (c) 2025 DigiPen Institute of Technology. All rights reserved.
 """

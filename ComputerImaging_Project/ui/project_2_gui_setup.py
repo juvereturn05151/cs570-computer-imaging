@@ -11,6 +11,7 @@ from images_ops.image_ops import (
     apply_histogram_equalization,apply_histogram_equalization_opencv,apply_gaussian_smoothing,apply_edge_detection,apply_unsharp_masking
 )
 from image_data import update_output_image
+from utils.frequent_used_ops import validate_gaussian_smoothing_input_variables, validate_unsharp_masking_input_variables
 
 def init_project_2_gui(project_2_frame, input_label, output_image_label):
     max_val = getattr(input_label, "max_val", 255)
@@ -51,57 +52,30 @@ def init_project_2_gui(project_2_frame, input_label, output_image_label):
 
     return kernel_var, sigma_var, padding_var
 
-def setup_unsharp_masking_panel(parent_frame, input_label, output_image_label, kernel_var, sigma_var, padding_var):
-    """Setup Unsharp Masking panel below Sobel edge detection"""
-    unsharp_frame = tk.Frame(parent_frame)
-    unsharp_frame.pack(fill="x", pady=(10, 5))
+def setup_gaussian_smoothing_panel(gaussian_frame, input_label, output_image_label, kernel_var, sigma_var, padding_var):
+    """Setup Gaussian Panel"""
 
-    tk.Label(unsharp_frame, text="Unsharp Masking:", font=("Arial", 9, "bold")).pack(anchor="w")
-
-    # unsharp Masking parameters frame
-    unsharp_param_frame = tk.Frame(unsharp_frame)
-    unsharp_param_frame.pack(fill="x", pady=2)
-
-    # scaling factor k input
-    k_frame = tk.Frame(unsharp_param_frame)
-    k_frame.pack(fill="x")
-    tk.Label(k_frame, text="Scaling Factor k:").pack(side=tk.LEFT)
-    k_var = tk.StringVar(value="1.0")
-    k_entry = ttk.Entry(k_frame, textvariable=k_var, width=8)
-    k_entry.pack(side=tk.LEFT, padx=5)
-
-    # info label explaining the parameters
-    info_label = tk.Label(unsharp_param_frame,text="Uses Gaussian params above for blurring",font=("Arial", 7), fg="gray")
-    info_label.pack(anchor="w", pady=(2, 0))
-
-    # apply Unsharp Masking button
-    def apply_unsharp_masking_operation():
+    # apply Gaussian smoothing button
+    def apply_gaussian_smoothing_operation():
         try:
             kernel_size = int(kernel_var.get())
             sigma = float(sigma_var.get())
             padding_mode = padding_var.get()
-            k_value = float(k_var.get())
 
-            # validate parameters
-            if kernel_size % 2 == 0:
-                raise ValueError("Kernel size must be odd")
-            if kernel_size < 3:
-                raise ValueError("Kernel size must be at least 3")
-            if sigma <= 0:
-                raise ValueError("Sigma must be positive")
-            if k_value <= 0:
-                raise ValueError("Scaling factor k must be positive")
+            if not validate_gaussian_smoothing_input_variables(kernel_size, sigma):
+                return
 
-            result = apply_unsharp_masking(input_label.pil_image, kernel_size, sigma, k_value, padding_mode)
+            result = apply_gaussian_smoothing(input_label.pil_image, kernel_size, sigma, padding_mode)
             update_output_image(output_image_label, result)
-            print(f"Applied Unsharp Masking: N={kernel_size}, σ={sigma}, k={k_value}, padding={padding_mode}")
+            print(f"Applied Gaussian smoothing: N={kernel_size}, σ={sigma}, padding={padding_mode}")
         except ValueError as e:
-            print(f"Error in Unsharp Masking: {e}")
+            print(f"Error in Gaussian smoothing: {e}")
         except Exception as e:
-            print(f"Unexpected error in Unsharp Masking: {e}")
+            print(f"Unexpected error in Gaussian smoothing: {e}")
 
-    unsharp_btn = tk.Button(unsharp_frame, text="Apply Unsharp Masking", command=apply_unsharp_masking_operation, bg="lightcoral")
-    unsharp_btn.pack(fill="x", pady=2)
+    gaussian_btn = tk.Button(gaussian_frame, text="Apply Gaussian Smoothing",
+                             command=apply_gaussian_smoothing_operation, bg="lightblue")
+    gaussian_btn.pack(fill="x", pady=2)
 
 def setup_sobel_filter_panel(parent_frame, input_label, output_image_label):
     """Setup Sobel edge detection panel below Gaussian filter"""
@@ -140,33 +114,45 @@ def setup_sobel_filter_panel(parent_frame, input_label, output_image_label):
     sobel_btn = tk.Button(sobel_frame, text="Apply Sobel Edge Detection",command=apply_sobel_edge_detection, bg="lightgreen")
     sobel_btn.pack(fill="x", pady=2)
 
-def setup_gaussian_smoothing_panel(gaussian_frame, input_label, output_image_label, kernel_var, sigma_var, padding_var):
-    """Setup Gaussian Panel"""
+def setup_unsharp_masking_panel(parent_frame, input_label, output_image_label, kernel_var, sigma_var, padding_var):
+    """Setup Unsharp Masking panel below Sobel edge detection"""
+    unsharp_frame = tk.Frame(parent_frame)
+    unsharp_frame.pack(fill="x", pady=(10, 5))
 
-    # apply Gaussian smoothing button
-    def apply_gaussian_smoothing_operation():
+    tk.Label(unsharp_frame, text="Unsharp Masking:", font=("Arial", 9, "bold")).pack(anchor="w")
+
+    # unsharp Masking parameters frame
+    unsharp_param_frame = tk.Frame(unsharp_frame)
+    unsharp_param_frame.pack(fill="x", pady=2)
+
+    # scaling factor k input
+    k_frame = tk.Frame(unsharp_param_frame)
+    k_frame.pack(fill="x")
+    tk.Label(k_frame, text="Scaling Factor k:").pack(side=tk.LEFT)
+    k_var = tk.StringVar(value="1.0")
+    k_entry = ttk.Entry(k_frame, textvariable=k_var, width=8)
+    k_entry.pack(side=tk.LEFT, padx=5)
+
+    # info label explaining the parameters
+    info_label = tk.Label(unsharp_param_frame,text="Uses Gaussian params above for blurring",font=("Arial", 7), fg="gray")
+    info_label.pack(anchor="w", pady=(2, 0))
+
+    # apply Unsharp Masking button
+    def apply_unsharp_masking_operation():
         try:
             kernel_size = int(kernel_var.get())
             sigma = float(sigma_var.get())
             padding_mode = padding_var.get()
+            k_value = float(k_var.get())
 
-            # validate kernel size
-            if kernel_size % 2 == 0:
-                raise ValueError("Kernel size must be odd")
-            if kernel_size < 3:
-                raise ValueError("Kernel size must be at least 3")
-            if sigma <= 0:
-                raise ValueError("Sigma must be positive")
+            if not validate_unsharp_masking_input_variables(kernel_size, sigma, k_value):
+                return
 
-            result = apply_gaussian_smoothing(input_label.pil_image, kernel_size, sigma, padding_mode)
+            result = apply_unsharp_masking(input_label.pil_image, kernel_size, sigma, k_value, padding_mode)
             update_output_image(output_image_label, result)
-            print(f"Applied Gaussian smoothing: N={kernel_size}, σ={sigma}, padding={padding_mode}")
-        except ValueError as e:
-            print(f"Error in Gaussian smoothing: {e}")
+            print(f"Applied Unsharp Masking: N={kernel_size}, σ={sigma}, k={k_value}, padding={padding_mode}")
         except Exception as e:
-            print(f"Unexpected error in Gaussian smoothing: {e}")
+            print(f"Unexpected error in Unsharp Masking: {e}")
 
-    gaussian_btn = tk.Button(gaussian_frame, text="Apply Gaussian Smoothing",
-                             command=apply_gaussian_smoothing_operation, bg="lightblue")
-    gaussian_btn.pack(fill="x", pady=2)
-
+    unsharp_btn = tk.Button(unsharp_frame, text="Apply Unsharp Masking", command=apply_unsharp_masking_operation, bg="lightcoral")
+    unsharp_btn.pack(fill="x", pady=2)

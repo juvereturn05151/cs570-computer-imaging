@@ -1,5 +1,5 @@
 """
-File Name:    unsharp_masking.py
+File Name:    gui.py
 Author(s):    Ju-ve Chankasemporn
 Copyright:    (c) 2025 DigiPen Institute of Technology. All rights reserved.
 """
@@ -52,7 +52,7 @@ def load_image(load_file_name, input_image_data, tree_view=None, root_id=None):
     except Exception:
         # default fallback for non-PPM images
         max_val = 255
-        
+
     # store using ImageData class
     input_image_data[name] = ImageData(pil_image, max_val)
 
