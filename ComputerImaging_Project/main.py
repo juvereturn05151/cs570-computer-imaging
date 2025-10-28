@@ -8,7 +8,7 @@ import tkinter as tk
 import gc
 import os
 
-from ui.gui_setup import setup_frames, setup_treeview, setup_image_labels, setup_command_interface, setup_interpolation_options, setup_operations_panel, setup_gaussian_filter_panel
+from ui.gui_setup import setup_frames, setup_treeview, setup_image_labels, setup_command_interface, setup_interpolation_options, setup_operations_panel, setup_project_2_filter_panel
 from image_data import load_default_images, load_output_images, copy_images
 from utils.events import bind_events, setup_window_resize_monitor, bind_events2
 
@@ -23,42 +23,42 @@ def main():
     root.title("CS 570 Project#1")
     root.geometry("1080x650")
 
-    # Setup GUI frames with Gaussian filter frame
-    (top_frame, gaussian_filter_frame, operation_frame, operation_frame2,
+    # setup GUI frames
+    (top_frame, project_2_filter_frame, operation_frame, operation_frame2,
      input_image_frame, input_image_frame2, output_image_frame, command_frame) = setup_frames(root)
 
-    # Setup treeview and get treeview reference and root item ID
-    tree_view, rootIID = setup_treeview(operation_frame)
-    tree_view2, rootIID2 = setup_treeview(operation_frame2)
+    # setup treeview and get treeview reference and root item ID
+    tree_view, root_id = setup_treeview(operation_frame)
+    tree_view2, root_id2 = setup_treeview(operation_frame2)
 
-    # Load default images and store in imageData dictionary
-    input_image_data = load_default_images(tree_view, rootIID)
-    input_image_data2 = copy_images(input_image_data, tree_view2, rootIID2)
+    # load default images and store in imageData dictionary
+    input_image_data = load_default_images(tree_view, root_id)
+    input_image_data2 = copy_images(input_image_data, tree_view2, root_id2)
     output_image_data = load_output_images(input_image_data)
 
-    # Setup image display labels and get label references
+    # setup image display labels and get label references
     input_image_label, input_image_label2, output_image_label = setup_image_labels(
         input_image_frame, input_image_frame2, output_image_frame,
         input_image_data, input_image_data2, output_image_data
     )
 
-    # Setup command interface
-    setup_command_interface(command_frame, input_image_data, tree_view, rootIID, output_image_label)
+    # setup command interface
+    setup_command_interface(command_frame, input_image_data, tree_view, root_id, output_image_label)
 
-    # Setup operations panel
+    # setup operations panel
     setup_operations_panel(command_frame, input_image_label, input_image_label2, output_image_label)
 
-    # Setup Gaussian filter panel - ADD THIS LINE
-    setup_gaussian_filter_panel(gaussian_filter_frame, input_image_label, output_image_label)
+    # setup project 2 filter
+    setup_project_2_filter_panel(project_2_filter_frame, input_image_label, output_image_label)
 
-    # Setup interpolation options
+    # setup interpolation options
     interpolation_var = setup_interpolation_options(command_frame)
 
-    # Bind event handlers to widgets
+    # bind event handlers to widgets
     bind_events(tree_view, input_image_label, output_image_label, input_image_data, output_image_data)
     bind_events2(tree_view2, input_image_label2, input_image_data2)
 
-    # Setup window resize monitoring
+    # setup window resize monitoring
     setup_window_resize_monitor(root, interpolation_var, input_image_label, input_image_label2, output_image_label)
 
     root.mainloop()

@@ -7,7 +7,6 @@ Copyright:    (c) 2025 DigiPen Institute of Technology. All rights reserved.
 import numpy as np
 from PIL import Image
 
-
 def sobel_edge_detection(input_image, scaling_factor=1.0):
     if not isinstance(input_image, Image.Image):
         raise ValueError("Input must be a PIL Image object")

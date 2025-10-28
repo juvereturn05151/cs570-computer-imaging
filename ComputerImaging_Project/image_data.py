@@ -7,7 +7,11 @@ Copyright:    (c) 2025 DigiPen Institute of Technology. All rights reserved.
 import os
 from PIL import Image, ImageTk
 
+file_name_list = ['cameraman.ppm', 'butterfly-16.ppm', 'apple-20.ppm', 'beetle-13.ppm', 'cup-9.ppm', 'mandril_gray.ppm']
+
 def get_ppm_maxvalue(filename):
+    """Read PPM file and return max value (Usually 255)"""
+
     with open(filename, "rb") as f:
         header = f.readline().strip()
         if header not in [b"P3", b"P6"]:
@@ -20,68 +24,64 @@ def get_ppm_maxvalue(filename):
         parts = line.split()
         if len(parts) < 2:
             parts += f.readline().split()
-        width, height = map(int, parts)
 
-        maxval = int(f.readline().strip())
-        return maxval
+        max_val = int(f.readline().strip())
+        return max_val
 
-def load_default_images(treeView, rootIID):
-    imageData = {}
-    filenameList = ['cameraman.ppm', 'butterfly-16.ppm', 'apple-20.ppm', 'beetle-13.ppm', 'cup-9.ppm', 'mandril_gray.ppm']
+def load_default_images(tree_view, root_id):
+    image_data = {}
 
-    for filename in filenameList:
+    for filename in file_name_list:
         pil_image = Image.open(filename)
         tk_image = ImageTk.PhotoImage(pil_image)
         name = os.path.basename(filename)
-        maxval = get_ppm_maxvalue(filename)
+        max_val = get_ppm_maxvalue(filename)
 
-        imageData[name] = {
+        image_data[name] = {
             "pil": pil_image,
             "tk": tk_image,
-            "maxval": maxval,
+            "max_val": max_val,
         }
 
-        treeView.insert(rootIID, -1, text=name)
+        tree_view.insert(root_id, -1, text=name)
 
-    return imageData
+    return image_data
 
-def copy_images(imageData, treeView, rootIID):
-    newImageData = {}
+def copy_images(image_data, tree_view, root_id):
+    new_image_data = {}
 
-    for name, imgDict in imageData.items():
-        # Duplicate the PIL image
+    for name, imgDict in image_data.items():
+        # duplicate the PIL image
         pil_copy = imgDict["pil"].copy()
-        # Create a new Tk wrapper for that copy
         tk_copy = ImageTk.PhotoImage(pil_copy)
 
-        newImageData[name] = {
+        new_image_data[name] = {
             "pil": pil_copy,
             "tk": tk_copy,
-            "maxval": imgDict["maxval"],
+            "max_val": imgDict["max_val"],
         }
 
-        treeView.insert(rootIID, -1, text=name)
+        tree_view.insert(root_id, -1, text=name)
 
-    return newImageData
+    return new_image_data
 
-def load_output_images(imageData):
-    negImageData = {}
+def load_output_images(image_data):
+    output_image_data = {}
 
-    for name, imgDict in imageData.items():
+    for name, imgDict in image_data.items():
         orig_pil = imgDict["pil"]
-        neg_pil = orig_pil
-        neg_tk = ImageTk.PhotoImage(neg_pil)
 
-        negImageData[name] = {
-            "pil": neg_pil,
-            "tk": neg_tk,
-            "maxval": imgDict["maxval"],
+        output_image_data[name] = {
+            "pil": orig_pil,
+            "tk": ImageTk.PhotoImage(orig_pil),
+            "max_val": imgDict["max_val"],
         }
 
-    return negImageData
+    return output_image_data
 
-def update_output_image(outputLabel, pil_image):
-    outputLabel.original_pil = pil_image
-    outputLabel.pil_image = pil_image
-    outputLabel.tk_image = ImageTk.PhotoImage(pil_image)
-    outputLabel.configure(image=outputLabel.tk_image)
+def update_output_image(output_label, pil_image):
+    """Update and configure the output image"""
+    output_label.original_pil = pil_image
+    output_label.pil_image = pil_image
+    output_label.tk_image = ImageTk.PhotoImage(pil_image)
+    output_label.configure(image=output_label.tk_image)
