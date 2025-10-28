@@ -19,7 +19,6 @@ def unsharp_masking(input_image, kernel_size, sigma, k, padding_mode='reflect'):
     # apply Gaussian blur to create the blurred version
     blurred_image = gaussian_smoothing(input_image, kernel_size, sigma, padding_mode)
 
-    # convert images to numpy arrays for processing
     original_array = np.array(input_image, dtype=np.float32)
     blurred_array = np.array(blurred_image, dtype=np.float32)
 
@@ -32,5 +31,4 @@ def unsharp_masking(input_image, kernel_size, sigma, k, padding_mode='reflect'):
     # clip values to valid range [0, 255]
     sharpened_array = np.clip(sharpened_array, 0, 255)
 
-    # convert back to PIL Image
     return Image.fromarray(sharpened_array.astype(np.uint8))

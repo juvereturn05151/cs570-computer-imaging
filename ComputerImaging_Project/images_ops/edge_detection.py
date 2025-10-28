@@ -8,6 +8,8 @@ import numpy as np
 from PIL import Image
 
 def sobel_edge_detection(input_image, scaling_factor=1.0):
+    """An algorithm to detect edges in an image by checking the rapid change in the slope of the pixels."""
+
     if input_image.mode != 'L':
         input_image = input_image.convert('L')
 
@@ -25,19 +27,19 @@ def sobel_edge_detection(input_image, scaling_factor=1.0):
                         [0, 0, 0],
                         [1, 2, 1]]) * scaling_factor
 
-    # Apply Sobel filters with zero padding
+    # apply Sobel filters with zero padding
     for i in range(1, height - 1):
         for j in range(1, width - 1):
-            # Extract 3x3 region
+            # extract 3x3 region
             region = img_array[i - 1:i + 2, j - 1:j + 2]
 
-            # Apply horizontal Sobel (Gx)
+            # (Gx)
             gx = np.sum(region * sobel_x)
 
-            # Apply vertical Sobel (Gy)
+            # (Gy)
             gy = np.sum(region * sobel_y)
 
-            # Combine the results (approximate magnitude)
+            # combine the results
             magnitude = np.sqrt(gx ** 2 + gy ** 2)
             output_array[i, j] = magnitude
 

@@ -14,13 +14,13 @@ from images_ops.smoothing_filter import gaussian_smoothing
 from images_ops.edge_detection import sobel_edge_detection
 from images_ops.unsharp_masking import unsharp_masking
 
-def create_negative_image(input_image, maxval):
+def create_negative_image(input_image, max_val):
     if not isinstance(input_image, Image.Image):
         raise ValueError("Input must be a PIL Image object")
 
-    return apply_negative_image(input_image, maxval)
+    return apply_negative_image(input_image, max_val)
 
-def add_images(input_image1, input_image2, maxval):
+def add_images(input_image1, input_image2, max_val):
     if not isinstance(input_image1, Image.Image):
         raise ValueError("Input must be a PIL Image object")
 
@@ -30,9 +30,9 @@ def add_images(input_image1, input_image2, maxval):
     if input_image1.size != input_image2.size:
         input_image2 = input_image2.resize(input_image1.size)
 
-    return apply_images_addition(input_image1, input_image2, maxval)
+    return apply_images_addition(input_image1, input_image2, max_val)
 
-def subtract_images(input_image1, input_image2, maxval):
+def subtract_images(input_image1, input_image2, max_val):
     if not isinstance(input_image1, Image.Image):
         raise ValueError("Input must be a PIL Image object")
 
@@ -42,9 +42,9 @@ def subtract_images(input_image1, input_image2, maxval):
     if input_image1.size != input_image2.size:
         input_image2 = input_image2.resize(input_image1.size)
 
-    return apply_images_subtraction(input_image1, input_image2, maxval)
+    return apply_images_subtraction(input_image1, input_image2, max_val)
 
-def multiply_images(input_image1, input_image2, maxval):
+def multiply_images(input_image1, input_image2, max_val):
     if not isinstance(input_image1, Image.Image):
         raise ValueError("Input must be a PIL Image object")
 
@@ -54,20 +54,20 @@ def multiply_images(input_image1, input_image2, maxval):
     if input_image1.size != input_image2.size:
         input_image2 = input_image2.resize(input_image1.size)
 
-    return apply_images_multiplication(input_image1, input_image2, maxval)
+    return apply_images_multiplication(input_image1, input_image2, max_val)
 
-def log_transform(input_image, maxval, c=1.0):
+def log_transform(input_image, max_val, c=1.0):
     if not isinstance(input_image, Image.Image):
         raise ValueError("Input must be a PIL Image object")
 
-    return apply_log_transform(input_image, maxval, c)
+    return apply_log_transform(input_image, max_val, c)
 
 
-def power_transform(input_image, maxval,gamma=1.0, c=1.0):
+def power_transform(input_image, max_val,gamma=1.0, c=1.0):
     if not isinstance(input_image, Image.Image):
         raise ValueError("Input must be a PIL Image object")
 
-    return apply_power_transform(input_image, maxval,gamma, c)
+    return apply_power_transform(input_image, max_val,gamma, c)
 
 def connected_component_labeling(input_label, connectivity=4):
     return connected_component_label(input_label, connectivity)
@@ -82,18 +82,18 @@ def nearest_neighbor(pil_image, new_width, new_height):
 def billinear_interpolation(pil_image, new_width, new_height):
     return billinear_interpolation_resize(pil_image, new_width, new_height)
 
-def apply_histogram_equalization(input_image, maxval=255):
+def apply_histogram_equalization(input_image, max_val=255):
     if not isinstance(input_image, Image.Image):
         raise ValueError("Input must be a PIL Image object")
 
-    result, fig = histogram_equalization(input_image, maxval, plot_histogram=True)
+    result, fig = histogram_equalization(input_image, max_val, plot_histogram=True)
     return result
 
-def apply_histogram_equalization_opencv(input_image, maxval=255):
+def apply_histogram_equalization_opencv(input_image, max_val=255):
     if not isinstance(input_image, Image.Image):
         raise ValueError("Input must be a PIL Image object")
 
-    result, fig = histogram_equalization_opencv(input_image, maxval, plot_histogram=True)
+    result, fig = histogram_equalization_opencv(input_image, max_val, plot_histogram=True)
     return result
 
 def apply_gaussian_smoothing(input_image, kernel_size, sigma, padding_mode='reflect'):

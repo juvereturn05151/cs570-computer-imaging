@@ -9,8 +9,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 
-def histogram_equalizer(input_image, maxval=255):
-    # convert PIL to numpy array
+def _histogram_equalizer(input_image, maxval=255):
+    """Traditional method for histogram equalization.
+        The result should be more equalized intensities
+        on pixels of image"""
+
     if input_image.mode != 'L':
         input_image = input_image.convert('L')
     img_array = np.array(input_image)
@@ -34,7 +37,7 @@ def histogram_equalizer(input_image, maxval=255):
     return equalized_image, hist, bins
 
 
-def plot_histograms(original_hist, equalized_hist, bins, maxval=255):
+def _plot_histograms(original_hist, equalized_hist, bins, maxval=255):
     """Plot original and equalized histograms side by side"""
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
 
@@ -59,23 +62,23 @@ def plot_histograms(original_hist, equalized_hist, bins, maxval=255):
 
 
 def histogram_equalization(input_image, maxval=255, plot_histogram=True):
-    # apply histogram equalization
-    equalized_image, original_hist, bins = histogram_equalizer(input_image, maxval)
+    """Apply traditional method for histogram equalization and plot the table"""
+    equalized_image, original_hist, bins = _histogram_equalizer(input_image, maxval)
 
-    # calculate histogram of equalized image
+    # calculate histogram
     equalized_array = np.array(equalized_image)
     equalized_hist, _ = np.histogram(equalized_array.flatten(), bins=maxval + 1, range=[0, maxval])
 
+    # plot the table
     fig = None
     if plot_histogram:
-        fig = plot_histograms(original_hist, equalized_hist, bins, maxval)
+        fig = _plot_histograms(original_hist, equalized_hist, bins, maxval)
         plt.show()
 
     return equalized_image, fig
 
 def histogram_equalization_opencv(input_image, maxval=255, plot_histogram=True):
     """Histogram equalization using OpenCV for comparison"""
-    # convert PIL to numpy array
     if input_image.mode != 'L':
         input_image = input_image.convert('L')
     img_array = np.array(input_image)
@@ -83,13 +86,13 @@ def histogram_equalization_opencv(input_image, maxval=255, plot_histogram=True):
     # apply OpenCV histogram equalization
     equalized_array = cv2.equalizeHist(img_array)
 
-    # convert back to PIL
     equalized_image = Image.fromarray(equalized_array)
 
-    # calculate histograms for plotting
+    # calculate histograms
     original_hist, bins = np.histogram(img_array.flatten(), bins=maxval + 1, range=[0, maxval])
     equalized_hist, _ = np.histogram(equalized_array.flatten(), bins=maxval + 1, range=[0, maxval])
 
+    #  plot the table
     fig = None
     if plot_histogram:
         fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(15, 4))
@@ -102,8 +105,8 @@ def histogram_equalization_opencv(input_image, maxval=255, plot_histogram=True):
         ax1.set_xlim(0, maxval)
         ax1.grid(True, alpha=0.3)
 
-        # plot custom equalized histogram
-        custom_equalized, _, _ = histogram_equalizer(input_image, maxval)
+        # plot traditional equalized histogram for comparison
+        custom_equalized, _, _ = _histogram_equalizer(input_image, maxval)
         custom_array = np.array(custom_equalized)
         custom_hist, _ = np.histogram(custom_array.flatten(), bins=maxval + 1, range=[0, maxval])
         ax2.bar(bins[:-1], custom_hist, width=1, alpha=0.7, color='green')
