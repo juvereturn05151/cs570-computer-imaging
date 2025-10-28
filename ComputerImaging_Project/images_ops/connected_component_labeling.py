@@ -1,5 +1,5 @@
 """
-File Name:    unsharp_masking.py
+File Name:    connected_component_labeling.py
 Author(s):    Ju-ve Chankasemporn
 Copyright:    (c) 2025 DigiPen Institute of Technology. All rights reserved.
 """
@@ -18,11 +18,13 @@ COLORS = [
 ]
 
 def prepare_binary(input_label, threshold=128):
+    """Thresholding specifically to separate labeling areas in the greyscale image"""
     gray = input_label.pil_image.convert('L') if input_label.pil_image.mode != 'L' else input_label.pil_image
     arr = np.array(gray, dtype=np.uint8)
     return (arr > threshold).astype(np.uint8)
 
 def visualize_labels(labels):
+    """Assign predefined colors to each label"""
     h, w = labels.shape
     rgb = np.zeros((h, w, 3), dtype=np.uint8)
     for y in range(h):
@@ -33,6 +35,7 @@ def visualize_labels(labels):
     return Image.fromarray(rgb)
 
 def connected_component_label(input_label, connectivity=4):
+    """Compute connected label algorithm following 4-8 connected components"""
     binary = prepare_binary(input_label)
     h, w = binary.shape
     labels = np.zeros_like(binary, dtype=np.int32)
@@ -63,14 +66,15 @@ def connected_component_label(input_label, connectivity=4):
 
     return visualize_labels(labels)
 
-def connected_component_label_m(inputLabel):
-    binary = prepare_binary(inputLabel)
+def connected_component_label_m(input_label):
+    """Compute connected label algorithm following m-connected components"""
+    binary = prepare_binary(input_label)
     h, w = binary.shape
     labels = np.zeros_like(binary, dtype=np.int32)
     current_label = 1
 
     neighbors_4 = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-    neighbors_diag = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+    neighbors_diagonals = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
 
     for y in range(h):
         for x in range(w):
@@ -87,7 +91,7 @@ def connected_component_label_m(inputLabel):
                                 labels[ny, nx] = current_label
                                 queue.append((ny, nx))
                     # then check diagonals
-                    for dy, dx in neighbors_diag:
+                    for dy, dx in neighbors_diagonals:
                         ny, nx = cy + dy, cx + dx
                         if 0 <= ny < h and 0 <= nx < w:
                             if binary[ny, nx] and labels[ny, nx] == 0:

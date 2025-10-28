@@ -8,19 +8,15 @@ import numpy as np
 from PIL import Image
 
 def sobel_edge_detection(input_image, scaling_factor=1.0):
-
-
     if input_image.mode != 'L':
         input_image = input_image.convert('L')
 
-    # Convert to numpy array
     img_array = np.array(input_image, dtype=np.float32)
     height, width = img_array.shape
 
-    # Initialize output array
     output_array = np.zeros((height, width), dtype=np.float32)
 
-    # Define Sobel kernels with scaling factor
+    # define Sobel kernels with scaling factor
     sobel_x = np.array([[-1, 0, 1],
                         [-2, 0, 2],
                         [-1, 0, 1]]) * scaling_factor
@@ -45,8 +41,6 @@ def sobel_edge_detection(input_image, scaling_factor=1.0):
             magnitude = np.sqrt(gx ** 2 + gy ** 2)
             output_array[i, j] = magnitude
 
-    # Normalize to 0-255 range
     output_array = np.clip(output_array, 0, 255)
 
-    # Convert back to PIL Image
     return Image.fromarray(output_array.astype(np.uint8))
