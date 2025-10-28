@@ -8,7 +8,7 @@ import tkinter as tk
 import gc
 import os
 
-from ui.gui_setup import setup_frames, setup_treeview, setup_image_labels, setup_command_interface, setup_interpolation_options, setup_operations_panel, setup_project_2_filter_panel
+from ui.gui_setup import setup_frames, setup_treeview, setup_image_labels, setup_command_interface, setup_interpolation_options, setup_project_1_operations_panel, setup_project_2_filter_panel
 from image_data import load_default_images, load_output_images, copy_images
 from utils.events import bind_events, setup_window_resize_monitor, bind_events2
 
@@ -45,10 +45,10 @@ def main():
     # setup command interface
     setup_command_interface(command_frame, input_image_data, tree_view, root_id, output_image_label)
 
-    # setup operations panel
-    setup_operations_panel(command_frame, input_image_label, input_image_label2, output_image_label)
+    # setup project_1 operation panel
+    setup_project_1_operations_panel(command_frame, input_image_label, input_image_label2, output_image_label)
 
-    # setup project 2 filter
+    # setup project 2 filter panel
     setup_project_2_filter_panel(project_2_filter_frame, input_image_label, output_image_label)
 
     # setup interpolation options

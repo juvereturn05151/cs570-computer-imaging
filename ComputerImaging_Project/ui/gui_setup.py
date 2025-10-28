@@ -11,8 +11,9 @@ import os
 from utils.commands import execute_command
 from images_ops.image_ops import (
     create_negative_image, add_images, subtract_images, multiply_images,
-    log_transform, power_transform, connected_component_labeling,
-    connected_component_labeling_m,
+)
+from ui.project_1_gui_setup import(
+    init_project_1_gui,update_parameters,setup_log_transform_panel,setup_power_transform_panel, setup_connected_component_labeling
 )
 from ui.project_2_gui_setup import(
     init_project_2_gui,setup_gaussian_smoothing_panel,setup_sobel_filter_panel,setup_unsharp_masking_panel
@@ -142,88 +143,30 @@ def setup_project_2_filter_panel(project_2_filter_frame, input_label, output_ima
     # unsharp Masking section
     setup_unsharp_masking_panel(project_2_frame, input_label, output_image_label, kernel_var, sigma_var, padding_var)
 
-def setup_operations_panel(command_frame, inputLabel, inputLabel2, output_image_label):
+def setup_project_1_operations_panel(command_frame, input_label, inputLabel2, output_image_label):
     ops_frame = tk.Frame(command_frame)
     ops_frame.pack(side=tk.LEFT, padx=10, pady=5)
 
-    tk.Label(ops_frame, text="Operations:").pack(anchor="w")
-
-    # create parameter frame for transform operations
-    param_frame = tk.Frame(ops_frame)
-    param_frame.pack(fill="x", pady=5)
-
-    # parameter variables
-    c_var = tk.DoubleVar(value=1.0)
-    gamma_var = tk.DoubleVar(value=1.0)
-
-    # parameter input widgets
-    tk.Label(param_frame, text="c:").pack(side=tk.LEFT, padx=2)
-    c_entry = ttk.Entry(param_frame, textvariable=c_var, width=6)
-    c_entry.pack(side=tk.LEFT, padx=2)
-
-    tk.Label(param_frame, text="γ:").pack(side=tk.LEFT, padx=2)
-    gamma_entry = ttk.Entry(param_frame, textvariable=gamma_var, width=6)
-    gamma_entry.pack(side=tk.LEFT, padx=2)
-
-    update_param_btn = tk.Button(param_frame, text="Update Params", command=lambda: update_parameters(c_var, gamma_var))
-    update_param_btn.pack(side=tk.LEFT, padx=5)
+    c_var, gamma_var = init_project_1_gui(ops_frame)
 
     # store current parameters for operations
-    current_c = tk.DoubleVar(value=1.0)
-    current_gamma = tk.DoubleVar(value=1.0)
+    current_c, current_gamma = update_parameters(c_var, gamma_var)
 
-    def update_parameters(c_var, gamma_var):
-        try:
-            c_value = float(c_var.get())
-            gamma_value = float(gamma_var.get())
-            current_c.set(c_value)
-            current_gamma.set(gamma_value)
-            print(f"Parameters updated: c={c_value}, γ={gamma_value}")
-        except ValueError:
-            print("Invalid parameter values. Please enter numbers.")
+    max_val = getattr(input_label, "max_val", 255)
 
-    max_val = getattr(inputLabel, "max_val", 255)
+    tk.Button(ops_frame, text="Negative", command=lambda: update_output_image(output_image_label, create_negative_image(input_label.pil_image, max_val))).pack(fill="x")
+    tk.Button(ops_frame, text="Addition", command=lambda: update_output_image(output_image_label,add_images(input_label.pil_image,inputLabel2.pil_image,max_val))).pack(fill="x")
+    tk.Button(ops_frame, text="Subtraction", command=lambda: update_output_image(output_image_label,subtract_images(input_label.pil_image,inputLabel2.pil_image,max_val))).pack(fill="x")
+    tk.Button(ops_frame, text="Product", command=lambda: update_output_image(output_image_label,multiply_images(input_label.pil_image,inputLabel2.pil_image,max_val))).pack(fill="x")
 
-    tk.Button(ops_frame, text="Negative", command=lambda: update_output_image(output_image_label, create_negative_image(inputLabel.pil_image, max_val))).pack(fill="x")
-    tk.Button(ops_frame, text="Addition", command=lambda: update_output_image(output_image_label,add_images(inputLabel.pil_image,inputLabel2.pil_image,max_val))).pack(fill="x")
-    tk.Button(ops_frame, text="Subtraction", command=lambda: update_output_image(output_image_label,subtract_images(inputLabel.pil_image,inputLabel2.pil_image,max_val))).pack(fill="x")
-    tk.Button(ops_frame, text="Product", command=lambda: update_output_image(output_image_label,multiply_images(inputLabel.pil_image,inputLabel2.pil_image,max_val))).pack(fill="x")
-    tk.Button(ops_frame, text="Update Input Image w/ Output Image", command=lambda: update_output_image(inputLabel, output_image_label.pil_image)).pack(fill="x")
+    setup_log_transform_panel(ops_frame, input_label, output_image_label, max_val, current_c)
 
-    def execute_log_transform():
-        try:
-            c_value = current_c.get()
-            result = log_transform(inputLabel.pil_image, max_val, c_value)
-            update_output_image(output_image_label, result)
-            print(f"Applied Log Transform with c={c_value}")
-        except Exception as e:
-            print(f"Error in Log Transform: {e}")
+    setup_power_transform_panel(ops_frame, input_label, output_image_label, max_val, current_c, current_gamma)
 
-    tk.Button(ops_frame, text="Log Transform", command=execute_log_transform).pack(fill="x")
-
-    # power transform with parameters
-    def execute_power_transform():
-        try:
-            c_value = current_c.get()
-            gamma_value = current_gamma.get()
-            result = power_transform(inputLabel.pil_image, max_val, gamma_value, c_value)
-            update_output_image(output_image_label, result)
-            print(f"Applied Power Transform with γ={gamma_value}, c={c_value}")
-        except Exception as e:
-            print(f"Error in Power Transform: {e}")
-
-    tk.Button(ops_frame, text="Power Transform", command=execute_power_transform).pack(fill="x")
+    tk.Button(ops_frame, text="Update Input Image w/ Output Image",command=lambda: update_output_image(input_label, output_image_label.pil_image)).pack(fill="x")
 
     # row2: connected labeling operations
-    connected_labeling_frame = tk.Frame(ops_frame)
-    connected_labeling_frame.pack(fill="x", pady=(10, 0))
-    tk.Label(connected_labeling_frame, text="Connected-Labeling:").pack(anchor="w")
-
-    connected_labeling_frame = tk.Frame(connected_labeling_frame)
-    connected_labeling_frame.pack(fill="x")
-    tk.Button(connected_labeling_frame, text="4-Connected",command=lambda: update_output_image(output_image_label, connected_component_labeling(inputLabel, 4))).pack(side=tk.LEFT, fill="x", expand=True, padx=2)
-    tk.Button(connected_labeling_frame, text="8-Connected",command=lambda: update_output_image(output_image_label, connected_component_labeling(inputLabel, 8))).pack(side=tk.LEFT, fill="x", expand=True, padx=2)
-    tk.Button(connected_labeling_frame, text="M-Connected",command=lambda: update_output_image(output_image_label, connected_component_labeling_m(inputLabel))).pack(side=tk.LEFT, fill="x", expand=True, padx=2)
+    setup_connected_component_labeling(ops_frame, input_label, output_image_label)
 
     # add tooltips or information labels
     info_label = tk.Label(ops_frame, text="Set c and γ values above, then click transform buttons", font=("Arial", 8), fg="gray")

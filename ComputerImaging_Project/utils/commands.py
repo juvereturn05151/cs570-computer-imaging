@@ -102,7 +102,7 @@ def execute_command(event=None, command_entry=None, image_data=None, tree_view=N
 
     max_val = getattr(input_pils[0], "max_val", 255)
 
-    # Handle each operation
+    # Handle multiple operations and filters
     if op == "add":
         result = add_images(input_pils[0], input_pils[1], max_val)
     elif op == "sub":

@@ -46,30 +46,27 @@ def load_image(loadFilename, imageData, treeView=None, rootIID=None):
     tk_image = ImageTk.PhotoImage(pil_image)
     name = os.path.basename(loadFilename)
 
-    # Get maxval for PPM (you already have a helper function get_ppm_maxvalue)
+    # Get max_val for PPM (you already have a helper function get_ppm_maxvalue)
     try:
-        maxval = get_ppm_maxvalue('data/' + loadFilename)
+        max_val = get_ppm_maxvalue('data/' + loadFilename)
     except Exception:
-        maxval = None  # fallback if not a PPM or error occurs
+        max_val = None  # fallback if not a PPM or error occurs
 
     # Store in same structure as load_default_images
     imageData[name] = {
         "pil": pil_image,
         "tk": tk_image,
-        "maxval": maxval,
+        "max_val": max_val,
     }
 
     # Insert into TreeView if provided
     if treeView is not None and rootIID is not None:
         treeView.insert(rootIID, -1, text=name)
 
-
-
 def save_output_image(fileName, outputImageLabel):
     # Check if we have a PIL image stored
     if hasattr(outputImageLabel, 'pil_image') is not None:
         print("No OutputImage")
-
 
     if hasattr(outputImageLabel, 'pil_image') and outputImageLabel.pil_image:
         if not fileName.endswith('.ppm'):
