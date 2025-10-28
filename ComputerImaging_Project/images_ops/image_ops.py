@@ -1,5 +1,5 @@
 """
-File Name:    unsharp_masking.py
+File Name:    image_ops.py
 Author(s):    Ju-ve Chankasemporn
 Copyright:    (c) 2025 DigiPen Institute of Technology. All rights reserved.
 """
@@ -96,20 +96,20 @@ def apply_histogram_equalization_opencv(input_image, max_val=255):
     result, fig = histogram_equalization_opencv(input_image, max_val, plot_histogram=True)
     return result
 
-def apply_gaussian_smoothing(input_image, kernel_size, sigma, padding_mode='reflect'):
+def apply_gaussian_smoothing(input_image, kernel_size, sigma, padding_mode='reflect', max_val=255):
     if not isinstance(input_image, Image.Image):
         raise ValueError("Input must be a PIL Image object")
 
-    return gaussian_smoothing(input_image, kernel_size, sigma, padding_mode)
+    return gaussian_smoothing(input_image, kernel_size, sigma, padding_mode, max_val)
 
-def apply_edge_detection(input_image, scaling_factor):
+def apply_edge_detection(input_image, scaling_factor, max_val=255):
     if not isinstance(input_image, Image.Image):
         raise ValueError("Input must be a PIL Image object")
 
-    return sobel_edge_detection(input_image, scaling_factor)
+    return sobel_edge_detection(input_image, scaling_factor, max_val)
 
-def apply_unsharp_masking(input_image, kernel_size, sigma, k, padding_mode='reflect'):
+def apply_unsharp_masking(input_image, kernel_size, sigma, k, padding_mode='reflect', max_val=255):
     if not isinstance(input_image, Image.Image):
         raise ValueError("Input must be a PIL Image object")
 
-    return unsharp_masking(input_image, kernel_size, sigma, k, padding_mode)
+    return unsharp_masking(input_image, kernel_size, sigma, k, padding_mode, max_val)

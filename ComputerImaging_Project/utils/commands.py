@@ -14,7 +14,7 @@ from images_ops.image_ops import (
     apply_gaussian_smoothing, apply_edge_detection, apply_unsharp_masking
 )
 from image_data import update_output_image  # Import this function
-from utils.frequent_used_ops import validate_gaussian_smoothing_input_variables, validate_unsharp_masking_input_variables
+from utils.frequent_used_ops import validate_gaussian_smoothing_input_variables, validate_unsharp_masking_input_variables, get_max_value
 
 def parse_command_args(tokens, flag):
     """Use to extract command line arguments"""
@@ -100,7 +100,7 @@ def execute_command(event=None, command_entry=None, image_data=None, tree_view=N
     from PIL import Image
     input_pils = [Image.open(os.path.join(os.getcwd(), f)) for f in input_files]
 
-    max_val = getattr(input_pils[0], "max_val", 255)
+    max_val = get_max_value(input_pils[0])
 
     # Handle multiple operations and filters
     if op == "add":
@@ -147,7 +147,7 @@ def execute_command(event=None, command_entry=None, image_data=None, tree_view=N
                 return
 
             # Apply Gaussian blur with default padding mode
-            result = apply_gaussian_smoothing(input_pils[0], kernel_size, sigma, 'reflect')
+            result = apply_gaussian_smoothing(input_pils[0], kernel_size, sigma, 'reflect', get_max_value(input_pils[0]))
             print(f"Applied Gaussian blur: N={kernel_size}, σ={sigma}")
 
         except ValueError as e:
@@ -195,21 +195,8 @@ def execute_command(event=None, command_entry=None, image_data=None, tree_view=N
             if not validate_unsharp_masking_input_variables(kernel_size, sigma, k):
                 return
 
-            if kernel_size % 2 == 0:
-                print("Error: Kernel size must be odd")
-                return
-            if kernel_size < 3:
-                print("Error: Kernel size must be at least 3")
-                return
-            if sigma <= 0:
-                print("Error: Sigma must be positive")
-                return
-            if k <= 0:
-                print("Error: Scaling factor k must be positive")
-                return
-
             #apply unsharp masking
-            result = apply_unsharp_masking(input_pils[0], kernel_size, sigma, k, 'reflect')
+            result = apply_unsharp_masking(input_pils[0], kernel_size, sigma, k, 'reflect', get_max_value(input_pils[0]))
             print(f"Applied unsharp masking: N={kernel_size}, σ={sigma}, k={k}")
 
         except ValueError as e:

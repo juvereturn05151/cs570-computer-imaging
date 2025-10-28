@@ -35,21 +35,6 @@ def init_project_1_gui(ops_frame):
 
     return  c_var, gamma_var
 
-def update_parameters(c_var, gamma_var):
-    current_c = tk.DoubleVar(value=1.0)
-    current_gamma = tk.DoubleVar(value=1.0)
-
-    try:
-        c_value = float(c_var.get())
-        gamma_value = float(gamma_var.get())
-        current_c.set(c_value)
-        current_gamma.set(gamma_value)
-        print(f"Parameters updated: c={c_value}, γ={gamma_value}")
-    except ValueError:
-        print("Invalid parameter values. Please enter numbers.")
-
-    return  current_c, current_gamma
-
 def setup_log_transform_panel(ops_frame, input_label, output_image_label, max_val, c_var):
     def execute_log_transform():
         try:
@@ -66,7 +51,7 @@ def setup_power_transform_panel(ops_frame, input_label, output_image_label, max_
     # power transform with parameters
     def execute_power_transform():
         try:
-            c_value = c_var.get()  
+            c_value = c_var.get()
             gamma_value = gamma_var.get()
             result = power_transform(input_label.pil_image, max_val, gamma_value, c_value)
             update_output_image(output_image_label, result)

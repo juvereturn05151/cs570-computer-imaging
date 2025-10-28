@@ -7,7 +7,7 @@ Copyright:    (c) 2025 DigiPen Institute of Technology. All rights reserved.
 import numpy as np
 from PIL import Image
 
-def sobel_edge_detection(input_image, scaling_factor=1.0):
+def sobel_edge_detection(input_image, scaling_factor=1.0,  max_val=255):
     """An algorithm to detect edges in an image by checking the rapid change in the slope of the pixels."""
 
     if input_image.mode != 'L':
@@ -43,6 +43,6 @@ def sobel_edge_detection(input_image, scaling_factor=1.0):
             magnitude = np.sqrt(gx ** 2 + gy ** 2)
             output_array[i, j] = magnitude
 
-    output_array = np.clip(output_array, 0, 255)
+    output_array = np.clip(output_array, 0, max_val)
 
     return Image.fromarray(output_array.astype(np.uint8))

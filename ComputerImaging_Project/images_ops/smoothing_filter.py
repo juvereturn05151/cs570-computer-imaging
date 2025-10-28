@@ -53,7 +53,7 @@ def apply_filter_2d(image, kernel, padding_mode='reflect'):
     return output
 
 
-def gaussian_smoothing(input_image, kernel_size, sigma, padding_mode='reflect'):
+def gaussian_smoothing(input_image, kernel_size, sigma, padding_mode='reflect', max_val=255):
     """Perform gaussian smoothing on the input image,
     This should make an image blurrier"""
 
@@ -80,7 +80,7 @@ def gaussian_smoothing(input_image, kernel_size, sigma, padding_mode='reflect'):
         smoothed_array = np.stack(smoothed_channels, axis=2)
 
     # convert back to uint8 and PIL Image
-    smoothed_array = np.clip(smoothed_array, 0, 255).astype(np.uint8)
+    smoothed_array = np.clip(smoothed_array, 0, max_val).astype(np.uint8)
 
     if is_grayscale:
         return Image.fromarray(smoothed_array, mode='L')

@@ -11,10 +11,10 @@ from images_ops.image_ops import (
     apply_histogram_equalization,apply_histogram_equalization_opencv,apply_gaussian_smoothing,apply_edge_detection,apply_unsharp_masking
 )
 from image_data import update_output_image
-from utils.frequent_used_ops import validate_gaussian_smoothing_input_variables, validate_unsharp_masking_input_variables
+from utils.frequent_used_ops import validate_gaussian_smoothing_input_variables, validate_unsharp_masking_input_variables, get_max_value
 
 def init_project_2_gui(project_2_frame, input_label, output_image_label):
-    max_val = getattr(input_label, "max_val", 255)
+    max_val = get_max_value(input_label)
 
     tk.Button(project_2_frame, text="Histogram Equalization", command=lambda: update_output_image(output_image_label,apply_histogram_equalization(input_label.pil_image,max_val))).pack(fill="x")
     tk.Button(project_2_frame, text="Histogram Equalization OpenCV",command=lambda: update_output_image(output_image_label,apply_histogram_equalization_opencv(input_label.pil_image,max_val))).pack(fill="x")
@@ -54,7 +54,6 @@ def init_project_2_gui(project_2_frame, input_label, output_image_label):
 
 def setup_gaussian_smoothing_panel(gaussian_frame, input_label, output_image_label, kernel_var, sigma_var, padding_var):
     """Setup Gaussian Panel"""
-
     # apply Gaussian smoothing button
     def apply_gaussian_smoothing_operation():
         try:
@@ -65,7 +64,7 @@ def setup_gaussian_smoothing_panel(gaussian_frame, input_label, output_image_lab
             if not validate_gaussian_smoothing_input_variables(kernel_size, sigma):
                 return
 
-            result = apply_gaussian_smoothing(input_label.pil_image, kernel_size, sigma, padding_mode)
+            result = apply_gaussian_smoothing(input_label.pil_image, kernel_size, sigma, padding_mode, get_max_value(input_label))
             update_output_image(output_image_label, result)
             print(f"Applied Gaussian smoothing: N={kernel_size}, σ={sigma}, padding={padding_mode}")
         except ValueError as e:
@@ -103,7 +102,7 @@ def setup_sobel_filter_panel(parent_frame, input_label, output_image_label):
             if scaling_factor <= 0:
                 raise ValueError("Scaling factor must be positive")
 
-            result = apply_edge_detection(input_label.pil_image, scaling_factor)
+            result = apply_edge_detection(input_label.pil_image, scaling_factor, get_max_value(input_label))
             update_output_image(output_image_label, result)
             print(f"Applied Sobel Edge Detection with scaling factor={scaling_factor}")
         except ValueError as e:
@@ -148,7 +147,7 @@ def setup_unsharp_masking_panel(parent_frame, input_label, output_image_label, k
             if not validate_unsharp_masking_input_variables(kernel_size, sigma, k_value):
                 return
 
-            result = apply_unsharp_masking(input_label.pil_image, kernel_size, sigma, k_value, padding_mode)
+            result = apply_unsharp_masking(input_label.pil_image, kernel_size, sigma, k_value, padding_mode, get_max_value(input_label))
             update_output_image(output_image_label, result)
             print(f"Applied Unsharp Masking: N={kernel_size}, σ={sigma}, k={k_value}, padding={padding_mode}")
         except Exception as e:

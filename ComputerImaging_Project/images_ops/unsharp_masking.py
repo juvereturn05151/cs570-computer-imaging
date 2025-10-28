@@ -9,7 +9,7 @@ from PIL import Image
 
 from images_ops.smoothing_filter import gaussian_smoothing
 
-def unsharp_masking(input_image, kernel_size, sigma, k, padding_mode='reflect'):
+def unsharp_masking(input_image, kernel_size, sigma, k, padding_mode='reflect', max_val=255):
     """Apply unsharp masking: to make the image sharper
     by creating a mask from blurred image,
     then add it back to the original image"""
@@ -28,7 +28,6 @@ def unsharp_masking(input_image, kernel_size, sigma, k, padding_mode='reflect'):
     # apply unsharp masking: original + k * mask
     sharpened_array = original_array + k * mask
 
-    # clip values to valid range [0, 255]
-    sharpened_array = np.clip(sharpened_array, 0, 255)
+    sharpened_array = np.clip(sharpened_array, 0, max_val)
 
     return Image.fromarray(sharpened_array.astype(np.uint8))

@@ -13,7 +13,7 @@ from images_ops.image_ops import (
     create_negative_image, add_images, subtract_images, multiply_images,
 )
 from ui.project_1_gui_setup import(
-    init_project_1_gui,update_parameters,setup_log_transform_panel,setup_power_transform_panel, setup_connected_component_labeling
+    init_project_1_gui,setup_log_transform_panel,setup_power_transform_panel, setup_connected_component_labeling
 )
 from ui.project_2_gui_setup import(
     init_project_2_gui,setup_gaussian_smoothing_panel,setup_sobel_filter_panel,setup_unsharp_masking_panel
@@ -128,9 +128,6 @@ def setup_project_1_operations_panel(command_frame, input_label, input_label2, o
 
     c_var, gamma_var = init_project_1_gui(ops_frame)
 
-    # Remove this line - we don't need update_parameters anymore
-    # current_c, current_gamma = update_parameters(c_var, gamma_var)
-
     max_val = getattr(input_label, "max_val", 255)
 
     tk.Button(ops_frame, text="Negative", command=lambda: update_output_image(output_image_label, create_negative_image(input_label.pil_image, max_val))).pack(fill="x")
@@ -138,7 +135,6 @@ def setup_project_1_operations_panel(command_frame, input_label, input_label2, o
     tk.Button(ops_frame, text="Subtraction", command=lambda: update_output_image(output_image_label,subtract_images(input_label.pil_image,input_label2.pil_image,max_val))).pack(fill="x")
     tk.Button(ops_frame, text="Product", command=lambda: update_output_image(output_image_label,multiply_images(input_label.pil_image,input_label2.pil_image,max_val))).pack(fill="x")
 
-    # Pass c_var and gamma_var directly
     setup_log_transform_panel(ops_frame, input_label, output_image_label, max_val, c_var)
 
     setup_power_transform_panel(ops_frame, input_label, output_image_label, max_val, c_var, gamma_var)

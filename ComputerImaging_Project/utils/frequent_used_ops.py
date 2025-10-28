@@ -25,19 +25,19 @@ def validate_unsharp_masking_input_variables(kernel_size, sigma, k):
     errors = []
 
     if kernel_size % 2 == 0:
-        print("Error: Kernel size must be odd")
-        return
+        errors.append("Error: Kernel size must be odd")
     if kernel_size < 3:
-        print("Error: Kernel size must be at least 3")
-        return
+        errors.append("Error: Kernel size must be at least 3")
     if sigma <= 0:
-        print("Error: Sigma must be positive")
-        return
+        errors.append("Error: Sigma must be positive")
     if k <= 0:
-        print("Error: Scaling factor k must be positive")
-        return
+        errors.append("Error: Scaling factor k must be positive")
 
     if errors:
         print("Validation errors:\n- " + "\n- ".join(errors))
         return False
     return True
+
+def get_max_value(input_label):
+    """Return the maximum value from the label."""
+    return getattr(input_label, "max_val", 255)
