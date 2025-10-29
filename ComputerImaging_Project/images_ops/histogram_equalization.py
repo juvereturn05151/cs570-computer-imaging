@@ -110,7 +110,7 @@ def histogram_equalization_opencv(input_image, maxval=255, plot_histogram=True):
         custom_array = np.array(custom_equalized)
         custom_hist, _ = np.histogram(custom_array.flatten(), bins=maxval + 1, range=[0, maxval])
         ax2.bar(bins[:-1], custom_hist, width=1, alpha=0.7, color='green')
-        ax2.set_title('Custom Equalized Histogram')
+        ax2.set_title('Standard Equalized Histogram')
         ax2.set_xlabel('Pixel Intensity')
         ax2.set_ylabel('Frequency')
         ax2.set_xlim(0, maxval)

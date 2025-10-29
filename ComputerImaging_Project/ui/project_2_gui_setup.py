@@ -90,7 +90,7 @@ def setup_sobel_filter_panel(parent_frame, input_label, output_image_label):
     # scaling factor input
     scale_frame = tk.Frame(sobel_param_frame)
     scale_frame.pack(fill="x")
-    tk.Label(scale_frame, text="Scaling Factor:").pack(side="left")
+    tk.Label(scale_frame, text="c:").pack(side="left")
     sobel_scale_var = tk.StringVar(value="1.0")
     sobel_scale_entry = ttk.Entry(scale_frame, textvariable=sobel_scale_var, width=8)
     sobel_scale_entry.pack(side="left", padx=5)
@@ -127,7 +127,7 @@ def setup_unsharp_masking_panel(parent_frame, input_label, output_image_label, k
     # scaling factor k input
     k_frame = tk.Frame(unsharp_param_frame)
     k_frame.pack(fill="x")
-    tk.Label(k_frame, text="Scaling Factor k:").pack(side="left")
+    tk.Label(k_frame, text="c:").pack(side="left")
     k_var = tk.StringVar(value="1.0")
     k_entry = ttk.Entry(k_frame, textvariable=k_var, width=8)
     k_entry.pack(side="left", padx=5)

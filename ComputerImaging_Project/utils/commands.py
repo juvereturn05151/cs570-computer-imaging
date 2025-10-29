@@ -189,21 +189,21 @@ def execute_command(event=None, command_entry=None, image_data=None, tree_view=N
         # parse unsharp masking parameters
         n_val = parse_command_args(tokens, "-N")
         sigma_val = parse_command_args(tokens, "-sigma")
-        k_val = parse_command_args(tokens, "-k")
+        c_val = parse_command_args(tokens, "-c")
 
         # set defaults if not provided
         kernel_size = int(n_val) if n_val else 5
         sigma = float(sigma_val) if sigma_val else 1.0
-        k = float(k_val) if k_val else 1.0
+        c = float(c_val) if c_val else 1.0
 
         try:
             # Validate parameters
-            if not validate_unsharp_masking_input_variables(kernel_size, sigma, k):
+            if not validate_unsharp_masking_input_variables(kernel_size, sigma, c):
                 return
 
             #apply unsharp masking
-            result = apply_unsharp_masking(input_pils[0], kernel_size, sigma, k, 'reflect', get_max_value(input_pils[0]))
-            print(f"Applied unsharp masking: N={kernel_size}, σ={sigma}, k={k}")
+            result = apply_unsharp_masking(input_pils[0], kernel_size, sigma, c, 'reflect', get_max_value(input_pils[0]))
+            print(f"Applied unsharp masking: N={kernel_size}, σ={sigma}, c={c}")
 
         except ValueError as e:
             print(f"Error in unsharp masking parameters: {e}")
