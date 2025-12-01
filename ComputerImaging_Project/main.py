@@ -8,7 +8,7 @@ import tkinter as tk
 import gc
 import os
 
-from ui.gui_setup import setup_frames, setup_treeview, setup_image_labels, setup_command_interface, setup_interpolation_options, setup_project_1_operations_panel, setup_project_2_filter_panel
+from ui.gui_setup import setup_frames, setup_treeview, setup_image_labels, setup_command_interface, setup_interpolation_options, setup_project_1_operations_panel, setup_project_2_filter_panel, setup_project_3_fourier_panel
 from image_data import load_default_images, load_output_images, copy_images
 from utils.events import bind_events, setup_window_resize_monitor
 
@@ -24,7 +24,7 @@ def main():
     root.geometry("1080x650")
 
     # setup GUI frames
-    (top_frame, project_2_filter_frame, operation_frame, operation_frame2,
+    (top_frame, project_2_filter_frame, project_3_fourier_frame, operation_frame, operation_frame2,
      input_image_frame, input_image_frame2, output_image_frame, command_frame) = setup_frames(root)
 
     # setup treeview and get treeview reference and root item ID
@@ -50,6 +50,9 @@ def main():
 
     # setup project 2 filter panel
     setup_project_2_filter_panel(project_2_filter_frame, input_image_label, output_image_label)
+
+    # setup project 3 filter panel
+    setup_project_3_fourier_panel(project_3_fourier_frame, input_image_label,input_image_label2, output_image_label)
 
     # setup interpolation options
     interpolation_var = setup_interpolation_options(command_frame)

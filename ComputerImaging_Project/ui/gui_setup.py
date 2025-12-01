@@ -18,6 +18,10 @@ from ui.project_1_gui_setup import(
 from ui.project_2_gui_setup import(
     init_project_2_gui,setup_gaussian_smoothing_panel,setup_sobel_filter_panel,setup_unsharp_masking_panel
 )
+
+from ui.project_3_gui_setup import(
+    init_project_3_gui, run_direct_dft, run_separable_dft, run_fft, run_pseudocolor_spectrum, run_fft_compression
+)
 from image_data import update_output_image
 
 def setup_frames(root):
@@ -33,6 +37,15 @@ def setup_frames(root):
     top_frame.pack(side="top", fill="both", expand=True)
     operation_frame.pack(side="left", fill="y")
     operation_frame2.pack(side="left", fill="y")
+
+    # ---------------------------
+    # ADD TITLES ABOVE IMAGE FRAMES
+    # ---------------------------
+    tk.Label(input_image_frame, text="Input Image 1", font=("Arial", 10, "bold")).pack(side="top", pady=(5,0))
+    tk.Label(input_image_frame2, text="Input Image 2", font=("Arial", 10, "bold")).pack(side="top", pady=(5,0))
+    tk.Label(output_image_frame, text="Output Image", font=("Arial", 10, "bold")).pack(side="top", pady=(5,0))
+    # ---------------------------
+
     input_image_frame.pack(side="left", fill="both", expand=True)
     input_image_frame.pack_propagate(False)
     input_image_frame2.pack(side="left", fill="both", expand=True)
@@ -40,13 +53,17 @@ def setup_frames(root):
     output_image_frame.pack(side="right", fill="both", expand=True)
     output_image_frame.pack_propagate(False)
 
+    project_3_fourier_frame = tk.Frame(command_frame)
+    project_3_fourier_frame.pack(side="right", fill="y", padx=5)
+
     project_2_filter_frame = tk.Frame(command_frame)
     project_2_filter_frame.pack(side="right", fill="y")
 
     command_frame.pack(side="bottom", fill="x")
 
-    return (top_frame, project_2_filter_frame, operation_frame, operation_frame2,
+    return (top_frame, project_2_filter_frame, project_3_fourier_frame, operation_frame, operation_frame2,
             input_image_frame, input_image_frame2, output_image_frame, command_frame)
+
 
 def setup_treeview(operation_frame):
     """Create and configure the treeview widget for image selection"""
@@ -172,3 +189,85 @@ def setup_project_2_filter_panel(project_2_filter_frame, input_label, output_ima
 
     # unsharp Masking section
     setup_unsharp_masking_panel(project_2_frame, input_label, output_image_label, kernel_var, sigma_var, padding_var)
+
+def setup_project_3_fourier_panel(command_frame, input_label, input_label2, output_image_label):
+    """
+    Create and configure the Project 3 UI panel for Fourier Transform operations.
+
+    input_label      -> Original image
+    input_label2     -> Spectrum image (magnitude/log)
+    output_image_label -> Reconstructed image (inverse FT result)
+    """
+    project_3_frame = tk.Frame(command_frame)
+    project_3_frame.pack(side="right", padx=10, pady=10)
+
+    tk.Label(project_3_frame, text="PROJECT 3: Fourier Transform", font=("Arial", 10, "bold")).pack(anchor="center", pady=(0, 10))
+
+    # ------------------------------------------------------------
+    # Part A(a) Direct 2D DFT
+    # ------------------------------------------------------------
+    tk.Button(
+        project_3_frame,
+        text="Direct 2D DFT (Part A(a))",
+        bg="lightblue",
+        command=lambda: run_direct_dft(input_label, input_label2, output_image_label)
+    ).pack(fill="x", pady=3)
+
+    # ------------------------------------------------------------
+    # Part A(b) Separable 2D DFT
+    # ------------------------------------------------------------
+    tk.Button(
+        project_3_frame,
+        text="Separable 2D DFT (Part A(b))",
+        bg="lightgreen",
+        command=lambda: run_separable_dft(input_label, input_label2, output_image_label)
+    ).pack(fill="x", pady=3)
+
+    # ------------------------------------------------------------
+    # Part B: FFT
+    # ------------------------------------------------------------
+    tk.Button(
+        project_3_frame,
+        text="Fast Fourier Transform (Part B)",
+        bg="khaki",
+        command=lambda: run_fft(input_label, input_label2, output_image_label)
+    ).pack(fill="x", pady=3)
+
+    # ------------------------------------------------------------
+    # Part C: Pseudo-color Spectrum
+    # ------------------------------------------------------------
+    tk.Label(project_3_frame, text="Pseudo-color Bins:", font=("Arial", 9)).pack(anchor="w")
+
+    bins_var = tk.StringVar(value="8")
+    ttk.Entry(project_3_frame, textvariable=bins_var, width=8).pack(anchor="w", pady=2)
+
+    tk.Button(
+        project_3_frame,
+        text="Display Pseudo-color Spectrum (Part C)",
+        bg="orange",
+        command=lambda: run_pseudocolor_spectrum(input_label2, bins_var)
+    ).pack(fill="x", pady=3)
+
+    # ------------------------------------------------------------
+    # Part E: Extra Credit – Frequency Compression
+    # ------------------------------------------------------------
+    tk.Label(project_3_frame, text="Compression Frequency Range:", font=("Arial", 9, "bold")).pack(anchor="w", pady=(10, 3))
+
+    # Lower cutoff
+    tk.Label(project_3_frame, text="Low Cutoff:").pack(anchor="w")
+    low_cutoff_var = tk.StringVar(value="0")
+    ttk.Entry(project_3_frame, textvariable=low_cutoff_var, width=10).pack(anchor="w")
+
+    # Upper cutoff
+    tk.Label(project_3_frame, text="High Cutoff:").pack(anchor="w")
+    high_cutoff_var = tk.StringVar(value="999999")
+    ttk.Entry(project_3_frame, textvariable=high_cutoff_var, width=10).pack(anchor="w", pady=(0, 5))
+
+    tk.Button(
+        project_3_frame,
+        text="Apply Compression (Part E)",
+        bg="lightcoral",
+        command=lambda: run_fft_compression(input_label, input_label2, output_image_label, low_cutoff_var, high_cutoff_var)
+    ).pack(fill="x", pady=3)
+
+    return project_3_frame
