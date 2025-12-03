@@ -11,6 +11,8 @@ from images_ops.histogram_equalization import histogram_equalization, histogram_
 from images_ops.smoothing_filter import gaussian_smoothing
 from images_ops.edge_detection import sobel_edge_detection
 from images_ops.unsharp_masking import unsharp_masking
+from images_ops.direct_fourier_transform_operations import direct_dft, separable_dft
+from images_ops.fast_fourier_transform_operations import fft, fft_compression
 from utils.frequent_used_ops import validate_image, resize_image
 
 def create_negative_image(input_image, max_val):
@@ -83,3 +85,15 @@ def apply_edge_detection(input_image, scaling_factor, max_val=255):
 def apply_unsharp_masking(input_image, kernel_size, sigma, k, padding_mode='reflect', max_val=255):
     validate_image(input_image)
     return unsharp_masking(input_image, kernel_size, sigma, k, padding_mode, max_val)
+
+def apply_direct_dft(input_label, spectrum_label, output_label):
+    direct_dft(input_label, spectrum_label, output_label)
+
+def apply_separable_dft(input_label, spectrum_label, output_label):
+    separable_dft(input_label, spectrum_label, output_label)
+
+def apply_fft(input_label, spectrum_label, output_label):
+    fft(input_label, spectrum_label, output_label)
+
+def apply_fft_compression(input_label, spectrum_label, output_label):
+    fft_compression(input_label, spectrum_label, output_label)

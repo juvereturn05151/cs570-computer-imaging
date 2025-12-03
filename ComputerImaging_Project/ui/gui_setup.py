@@ -20,7 +20,7 @@ from ui.project_2_gui_setup import(
 )
 
 from ui.project_3_gui_setup import(
-    init_project_3_gui, run_direct_dft, run_separable_dft, run_fft, run_pseudocolor_spectrum, run_fft_compression
+    init_project_3_gui, run_pseudocolor_spectrum
 )
 from image_data import update_output_image
 
