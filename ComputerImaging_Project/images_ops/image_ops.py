@@ -13,6 +13,7 @@ from images_ops.edge_detection import sobel_edge_detection
 from images_ops.unsharp_masking import unsharp_masking
 from images_ops.direct_fourier_transform_operations import direct_dft, separable_dft
 from images_ops.fast_fourier_transform_operations import fft, fft_compression
+from images_ops.pseudo_color_spectrum import pseudocolor_spectrum
 from utils.frequent_used_ops import validate_image, resize_image
 
 def create_negative_image(input_image, max_val):
@@ -95,5 +96,8 @@ def apply_separable_dft(input_label, spectrum_label, output_label):
 def apply_fft(input_label, spectrum_label, output_label):
     fft(input_label, spectrum_label, output_label)
 
-def apply_fft_compression(input_label, spectrum_label, output_label):
-    fft_compression(input_label, spectrum_label, output_label)
+def apply_fft_compression(input_label, spectrum_label, output_label, low_cut_var, high_cut_var):
+    fft_compression(input_label, spectrum_label, output_label, low_cut_var, high_cut_var )
+
+def apply_pseudocolor_spectrum(spectrum_label, bins_var):
+    pseudocolor_spectrum(spectrum_label, bins_var)

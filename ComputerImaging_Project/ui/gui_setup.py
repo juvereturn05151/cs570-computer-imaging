@@ -20,7 +20,7 @@ from ui.project_2_gui_setup import(
 )
 
 from ui.project_3_gui_setup import(
-    init_project_3_gui, run_pseudocolor_spectrum
+    init_project_3_gui
 )
 from image_data import update_output_image
 
@@ -38,13 +38,10 @@ def setup_frames(root):
     operation_frame.pack(side="left", fill="y")
     operation_frame2.pack(side="left", fill="y")
 
-    # ---------------------------
-    # ADD TITLES ABOVE IMAGE FRAMES
-    # ---------------------------
+    # add titles above the image frame
     tk.Label(input_image_frame, text="Input Image 1", font=("Arial", 10, "bold")).pack(side="top", pady=(5,0))
     tk.Label(input_image_frame2, text="Input Image 2", font=("Arial", 10, "bold")).pack(side="top", pady=(5,0))
     tk.Label(output_image_frame, text="Output Image", font=("Arial", 10, "bold")).pack(side="top", pady=(5,0))
-    # ---------------------------
 
     input_image_frame.pack(side="left", fill="both", expand=True)
     input_image_frame.pack_propagate(False)
