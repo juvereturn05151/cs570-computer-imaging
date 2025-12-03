@@ -8,7 +8,7 @@ import os
 from PIL import Image, ImageTk
 
 file_name_list = ['cameraman.ppm', 'butterfly-16.ppm', 'apple-20.ppm',
-                  'beetle-13.ppm', 'cup-9.ppm', 'mandril_gray.ppm']
+                  'beetle-13.ppm', 'cup-9.ppm', 'mandril_gray.ppm', 'tiny.ppm', 'tiny16.ppm']
 
 
 class ImageData:

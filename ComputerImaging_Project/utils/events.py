@@ -22,12 +22,13 @@ def setup_window_resize_monitor(root, interpolation_var, input_label1, input_lab
         if hasattr(label, "pil_image") and label.pil_image is not None:
             if method == "nearest":
                 resized_pil_image = nearest_neighbor(label.original_pil, width, height)
-            else:
+            elif method == "bilinear":
                 resized_pil_image = billinear_interpolation(label.original_pil, width, height)
 
-            label.pil_image = resized_pil_image
-            label.tk_image = ImageTk.PhotoImage(resized_pil_image)
-            label.configure(image=label.tk_image)
+            if method != "none":
+                label.pil_image = resized_pil_image
+                label.tk_image = ImageTk.PhotoImage(resized_pil_image)
+                label.configure(image=label.tk_image)
 
     def on_window_resize(event):
         """Resize each label"""

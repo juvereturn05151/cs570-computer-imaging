@@ -136,6 +136,7 @@ def setup_interpolation_options(command_frame):
     tk.Label(interp_frame, text="Interpolation:").pack(anchor="w")
     tk.Radiobutton(interp_frame, text="Nearest Neighbor", variable=interpolation_var, value="nearest").pack(anchor="w")
     tk.Radiobutton(interp_frame, text="Bilinear", variable=interpolation_var, value="bilinear").pack(anchor="w")
+    tk.Radiobutton(interp_frame, text="None", variable=interpolation_var, value="none").pack(anchor="w")
     return interpolation_var
 
 def setup_project_1_operations_panel(command_frame, input_label, input_label2, output_image_label):
