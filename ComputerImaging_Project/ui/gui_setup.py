@@ -144,6 +144,8 @@ def setup_project_1_operations_panel(command_frame, input_label, input_label2, o
     ops_frame = tk.Frame(command_frame)
     ops_frame.pack(side="left", padx=10, pady=5)
 
+    tk.Label(ops_frame, text="PROJECT 1: Basic Operations", font=("Arial", 10, "bold")).pack(anchor="center", pady=(0, 10))
+
     c_var, gamma_var = init_project_1_gui(ops_frame)
 
     max_val = getattr(input_label, "max_val", 255)
@@ -172,6 +174,8 @@ def setup_project_2_filter_panel(project_2_filter_frame, input_label, output_ima
     """Create and configure the project 2 panel widget for various filtering operations"""
     project_2_frame = tk.Frame(project_2_filter_frame)
     project_2_frame.pack(fill="x", pady=(10, 5))
+
+    tk.Label(project_2_frame, text="PROJECT 2: Filtering Operations", font=("Arial", 10, "bold")).pack(anchor="center", pady=(0, 10))
 
     kernel_var, sigma_var, padding_var = init_project_2_gui(project_2_frame, input_label, output_image_label)
 
@@ -204,71 +208,6 @@ def setup_project_3_fourier_panel(command_frame, input_label, input_label2, outp
 
     tk.Label(project_3_frame, text="PROJECT 3: Fourier Transform", font=("Arial", 10, "bold")).pack(anchor="center", pady=(0, 10))
 
-    # ------------------------------------------------------------
-    # Part A(a) Direct 2D DFT
-    # ------------------------------------------------------------
-    tk.Button(
-        project_3_frame,
-        text="Direct 2D DFT (Part A(a))",
-        bg="lightblue",
-        command=lambda: run_direct_dft(input_label, input_label2, output_image_label)
-    ).pack(fill="x", pady=3)
-
-    # ------------------------------------------------------------
-    # Part A(b) Separable 2D DFT
-    # ------------------------------------------------------------
-    tk.Button(
-        project_3_frame,
-        text="Separable 2D DFT (Part A(b))",
-        bg="lightgreen",
-        command=lambda: run_separable_dft(input_label, input_label2, output_image_label)
-    ).pack(fill="x", pady=3)
-
-    # ------------------------------------------------------------
-    # Part B: FFT
-    # ------------------------------------------------------------
-    tk.Button(
-        project_3_frame,
-        text="Fast Fourier Transform (Part B)",
-        bg="khaki",
-        command=lambda: run_fft(input_label, input_label2, output_image_label)
-    ).pack(fill="x", pady=3)
-
-    # ------------------------------------------------------------
-    # Part C: Pseudo-color Spectrum
-    # ------------------------------------------------------------
-    tk.Label(project_3_frame, text="Pseudo-color Bins:", font=("Arial", 9)).pack(anchor="w")
-
-    bins_var = tk.StringVar(value="8")
-    ttk.Entry(project_3_frame, textvariable=bins_var, width=8).pack(anchor="w", pady=2)
-
-    tk.Button(
-        project_3_frame,
-        text="Display Pseudo-color Spectrum (Part C)",
-        bg="orange",
-        command=lambda: run_pseudocolor_spectrum(input_label2, bins_var)
-    ).pack(fill="x", pady=3)
-
-    # ------------------------------------------------------------
-    # Part E: Extra Credit – Frequency Compression
-    # ------------------------------------------------------------
-    tk.Label(project_3_frame, text="Compression Frequency Range:", font=("Arial", 9, "bold")).pack(anchor="w", pady=(10, 3))
-
-    # Lower cutoff
-    tk.Label(project_3_frame, text="Low Cutoff:").pack(anchor="w")
-    low_cutoff_var = tk.StringVar(value="0")
-    ttk.Entry(project_3_frame, textvariable=low_cutoff_var, width=10).pack(anchor="w")
-
-    # Upper cutoff
-    tk.Label(project_3_frame, text="High Cutoff:").pack(anchor="w")
-    high_cutoff_var = tk.StringVar(value="999999")
-    ttk.Entry(project_3_frame, textvariable=high_cutoff_var, width=10).pack(anchor="w", pady=(0, 5))
-
-    tk.Button(
-        project_3_frame,
-        text="Apply Compression (Part E)",
-        bg="lightcoral",
-        command=lambda: run_fft_compression(input_label, input_label2, output_image_label, low_cutoff_var, high_cutoff_var)
-    ).pack(fill="x", pady=3)
+    init_project_3_gui(project_3_frame, input_label, input_label2, output_image_label)
 
     return project_3_frame
