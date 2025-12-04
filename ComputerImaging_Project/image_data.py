@@ -6,6 +6,7 @@ Copyright:    (c) 2025 DigiPen Institute of Technology. All rights reserved.
 
 import os
 from PIL import Image, ImageTk
+import numpy as np
 
 file_name_list = ['cameraman.ppm', 'butterfly-16.ppm', 'apple-20.ppm',
                   'beetle-13.ppm', 'cup-9.ppm', 'mandril_gray.ppm', 'tiny.ppm', 'tiny16.ppm']
@@ -76,3 +77,17 @@ def update_output_image(output_label, pil_image):
     output_label.pil_image = pil_image
     output_label.tk_image = ImageTk.PhotoImage(pil_image)
     output_label.configure(image=output_label.tk_image)
+
+def create_spectrum_image(image_numpy_array):
+    """Converts a complex Fourier spectrum into a visible grayscale image by
+    taking the log-magnitude and normalizing it to 0–255."""
+    spectrum = np.log(np.abs(image_numpy_array) + 1)
+    spectrum = (spectrum / spectrum.max() * 255).astype(np.uint8)
+    spectrum_image = Image.fromarray(spectrum)
+    return spectrum_image
+
+def create_reconstruct_image(reconstructed_numpy_array):
+    """Reconstruct image from numpy array"""
+    reconstructed_numpy_array = np.clip(np.abs(reconstructed_numpy_array), 0, 255).astype(np.uint8)
+    reconstructed_image = Image.fromarray(reconstructed_numpy_array)
+    return reconstructed_image

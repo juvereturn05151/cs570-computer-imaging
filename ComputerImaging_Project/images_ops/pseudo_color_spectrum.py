@@ -8,50 +8,35 @@ import numpy as np
 from PIL import Image
 from image_data import update_output_image
 
-def pseudocolor_spectrum(spectrum_label, bins_var):
-    print(f"TODO: Implement Pseudo-color Spectrum with {bins_var.get()} bins")
+colormap = [
+    (255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0),
+    (255, 0, 255), (0, 255, 255), (128, 0, 0), (0, 128, 0),
+    (0, 0, 128), (128, 128, 0), (128, 0, 128), (0, 128, 128),
+    (255, 128, 0), (128, 255, 0), (0, 255, 128), (0, 128, 255),
+    (128, 0, 255), (255, 0, 128), (192, 192, 192), (64, 64, 64),
+]
 
+def pseudocolor_spectrum(spectrum_label, bins_var):
     try:
         bins = int(bins_var.get())
         if bins < 2:
             bins = 2
     except ValueError:
-        bins = 8  # default
+        bins = 20
 
-        # ------------------------------------------
-        # 2. Get CURRENT spectrum image (must be grayscale)
-        # ------------------------------------------
+    # get CURRENT spectrum image (must be grayscale)
     gray_pil = spectrum_label.pil_image.convert("L")
     gray = np.array(gray_pil, dtype=np.uint8)
 
     H, W = gray.shape
 
-    # ------------------------------------------
-    # 3. Create bin edges (0..255)
-    # ------------------------------------------
+    # create bin edges (0..255)
     bin_edges = np.linspace(0, 255, bins + 1)
 
-    # ------------------------------------------
-    # 4. Choose a color map (per bin)
-    # ------------------------------------------
-    colormap = [
-        (255, 0, 0),  # red
-        (255, 165, 0),  # orange
-        (255, 255, 0),  # yellow
-        (0, 255, 0),  # green
-        (0, 255, 255),  # cyan
-        (0, 0, 255),  # blue
-        (128, 0, 255),  # violet
-        (255, 0, 255),  # magenta
-    ]
-
-    # If more bins than colors → extend by repeating last color
+    # if more bins than colors → extend by repeating last color
     while len(colormap) < bins:
         colormap.append(colormap[-1])
 
-    # ------------------------------------------
-    # 5. Create output color image
-    # ------------------------------------------
     color_image = np.zeros((H, W, 3), dtype=np.uint8)
 
     for i in range(bins):
@@ -61,10 +46,5 @@ def pseudocolor_spectrum(spectrum_label, bins_var):
         mask = (gray >= low) & (gray < high)
         color_image[mask] = colormap[i]
 
-    # ------------------------------------------
-    # 6. Update GUI
-    # ------------------------------------------
     color_pil = Image.fromarray(color_image)
     update_output_image(spectrum_label, color_pil)
-
-    print(f"Pseudo-color spectrum displayed using {bins} bins.")

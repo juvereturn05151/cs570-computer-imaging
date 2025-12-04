@@ -8,10 +8,10 @@ import numpy as np
 from PIL import Image
 from image_data import update_output_image
 
-def fft(input_label, spectrum_label, output_label):
-    print("Running FFT (Part B) – In-place, bit reversal, iterative.")
-
-    # Convert + Pad
+def fast_fourier_transform(input_label, spectrum_label, output_label):
+    """Computes the Fourier Transform using the butterfly operations
+       with O(N log N) time complexity by recursively dividing the signal into
+       even and odd samples ."""
     f = np.array(input_label.pil_image.convert("L"), dtype=float)
     padded, M0, N0 = pad_to_power_of_2(f)
     M, N = padded.shape
@@ -20,14 +20,14 @@ def fft(input_label, spectrum_label, output_label):
 
     # 1D FFT on rows
     for i in range(M):
-        fft_1d_inplace(F[i, :])
+        fast_fourier_transform_1d_inplace(F[i, :])
 
     # 1D FFT on columns
     for j in range(N):
-        fft_1d_inplace(F[:, j])
+        fast_fourier_transform_1d_inplace(F[:, j])
 
     # FFT shift for spectrum
-    F_shift = fftshift_2d(F)
+    F_shift = fast_fourier_transform_shift_2d(F)
 
     # Spectrum
     spectrum = np.log(np.abs(F_shift) + 1)
@@ -38,9 +38,9 @@ def fft(input_label, spectrum_label, output_label):
     G = F.copy()
 
     for j in range(N):
-        ifft_1d_inplace(G[:, j])
+        inverse_fast_fourier_transform_1d_inplace(G[:, j])
     for i in range(M):
-        ifft_1d_inplace(G[i, :])
+        inverse_fast_fourier_transform_1d_inplace(G[i, :])
 
     reconstructed = np.clip(np.abs(G[:M0, :N0]), 0, 255).astype(np.uint8)
     reconstructed_image = Image.fromarray(reconstructed)
@@ -48,11 +48,9 @@ def fft(input_label, spectrum_label, output_label):
     update_output_image(spectrum_label, spectrum_image)
     update_output_image(output_label, reconstructed_image)
 
-def fft_compression(input_label, spectrum_label, output_label, low_cut_var, high_cut_var):
-    print(f"TODO: Implement Compression: low={low_cut_var.get()}, high={high_cut_var.get()}")
-    # ------------------------------------------
-    # 1. Parse frequency cutoffs
-    # ------------------------------------------
+def fast_fourier_transform_compression(input_label, spectrum_label, output_label, low_cut_var, high_cut_var):
+    """Fourier Transform with cutting certain high and low frequencies"""
+    # parse frequency cutoffs
     try:
         low_cut = float(low_cut_var.get())
     except:
@@ -61,73 +59,67 @@ def fft_compression(input_label, spectrum_label, output_label, low_cut_var, high
     try:
         high_cut = float(high_cut_var.get())
     except:
-        high_cut = 1e9  # very large max
+        high_cut = 1e9
 
-    print(f"Applying compression: keep {low_cut} <= |F(u,v)| <= {high_cut}")
-
-    # ------------------------------------------
-    # 2. Convert image + pad to power-of-2
-    # ------------------------------------------
+    # convert image + pad to power-of-2
     f = np.array(input_label.pil_image.convert("L"), dtype=float)
     padded, M0, N0 = pad_to_power_of_2(f)
     M, N = padded.shape
 
-    # ------------------------------------------
-    # 3. Compute forward FFT (same as run_fft)
-    # ------------------------------------------
+    # compute forward FFT (same as run_fft)
     F = padded.astype(complex)
 
     # FFT rows
     for i in range(M):
-        fft_1d_inplace(F[i, :])
+        fast_fourier_transform_1d_inplace(F[i, :])
 
     # FFT columns
     for j in range(N):
-        fft_1d_inplace(F[:, j])
+        fast_fourier_transform_1d_inplace(F[:, j])
 
     # (No fftshift here because shift is only for display)
     magnitude = np.abs(F)
 
-    # ------------------------------------------
-    # 4. Apply frequency compression
-    # ------------------------------------------
+    # apply frequency compression
     mask = (magnitude >= low_cut) & (magnitude <= high_cut)
     F_compressed = F * mask  # zero out unwanted frequencies
 
-    # ------------------------------------------
-    # 5. For display: build shifted spectrum image
-    # ------------------------------------------
-    F_shift = fftshift_2d(F_compressed)
+    # build shifted spectrum image
+    F_shift = fast_fourier_transform_shift_2d(F_compressed)
 
     spectrum = np.log(np.abs(F_shift) + 1)
     spectrum = (spectrum / spectrum.max() * 255).astype(np.uint8)
     spectrum_image = Image.fromarray(spectrum)
 
-    # ------------------------------------------
-    # 6. Inverse FFT to reconstruct image
-    # ------------------------------------------
+    # inverse FFT to reconstruct image
     G = F_compressed.copy()
 
     # IFFT columns
     for j in range(N):
-        ifft_1d_inplace(G[:, j])
+        inverse_fast_fourier_transform_1d_inplace(G[:, j])
 
     # IFFT rows
     for i in range(M):
-        ifft_1d_inplace(G[i, :])
+        inverse_fast_fourier_transform_1d_inplace(G[i, :])
 
     reconstructed = np.clip(np.abs(G[:M0, :N0]), 0, 255).astype(np.uint8)
     reconstructed_image = Image.fromarray(reconstructed)
 
-    # ------------------------------------------
-    # 7. Update GUI with spectrum + compressed reconstruction
-    # ------------------------------------------
+    # update GUI with spectrum + compressed reconstruction
     update_output_image(spectrum_label, spectrum_image)
     update_output_image(output_label, reconstructed_image)
 
-    print("Compression applied and image reconstructed.")
+def pad_to_power_of_2(input_image):
+    """Pads the image so each dimension becomes a power of 2, so it works well with bit number."""
+    M, N = input_image.shape
+    M2 = 1 << (M - 1).bit_length()
+    N2 = 1 << (N - 1).bit_length()
+    result = np.zeros((M2, N2), dtype=float)
+    result[:M, :N] = input_image
+    return result, M, N
 
 def bit_reverse_indices(N):
+    """Revert the  bit indice for FFT pre-processing."""
     bits = N.bit_length() - 1
     rev = np.zeros(N, dtype=int)
     for i in range(N):
@@ -136,7 +128,7 @@ def bit_reverse_indices(N):
     return rev
 
 
-def fft_1d_inplace(x):
+def fast_fourier_transform_1d_inplace(x):
     """Iterative Decimation-in-Time FFT (In-place)."""
     N = len(x)
     rev = bit_reverse_indices(N)
@@ -158,28 +150,23 @@ def fft_1d_inplace(x):
         half = step
 
 
-def ifft_1d_inplace(x):
+def inverse_fast_fourier_transform_1d_inplace(x):
     """Inverse FFT using forward FFT code (conjugate trick)."""
     x[:] = np.conjugate(x)
-    fft_1d_inplace(x)
+    fast_fourier_transform_1d_inplace(x)
     x[:] = np.conjugate(x)
     x[:] = x / len(x)
 
 
-def fftshift_2d(F):
+def fast_fourier_transform_shift_2d(F):
+    """Move low frequency from top left to the center"""
     M, N = F.shape
     F = np.roll(F, M//2, axis=0)
     F = np.roll(F, N//2, axis=1)
     return F
 
 
-def pad_to_power_of_2(img):
-    M, N = img.shape
-    M2 = 1 << (M - 1).bit_length()
-    N2 = 1 << (N - 1).bit_length()
-    result = np.zeros((M2, N2), dtype=float)
-    result[:M, :N] = img
-    return result, M, N  # keep original size
+
 
 
 

@@ -20,7 +20,7 @@ os.chdir(ORIGIN_PATH)
 
 def main():
     root = tk.Tk()
-    root.title("CS 570 Project#1")
+    root.title("CS 570 Project#3")
     root.geometry("1080x650")
 
     # setup GUI frames

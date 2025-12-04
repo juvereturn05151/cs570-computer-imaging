@@ -11,8 +11,8 @@ from images_ops.histogram_equalization import histogram_equalization, histogram_
 from images_ops.smoothing_filter import gaussian_smoothing
 from images_ops.edge_detection import sobel_edge_detection
 from images_ops.unsharp_masking import unsharp_masking
-from images_ops.direct_fourier_transform_operations import direct_dft, separable_dft
-from images_ops.fast_fourier_transform_operations import fft, fft_compression
+from images_ops.direct_fourier_transform_operations import direct_discrete_fourier_transform, separable_discrete_fourier_transform
+from images_ops.fast_fourier_transform_operations import fast_fourier_transform, fast_fourier_transform_compression
 from images_ops.pseudo_color_spectrum import pseudocolor_spectrum
 from utils.frequent_used_ops import validate_image, resize_image
 
@@ -88,16 +88,16 @@ def apply_unsharp_masking(input_image, kernel_size, sigma, k, padding_mode='refl
     return unsharp_masking(input_image, kernel_size, sigma, k, padding_mode, max_val)
 
 def apply_direct_dft(input_label, spectrum_label, output_label):
-    direct_dft(input_label, spectrum_label, output_label)
+    direct_discrete_fourier_transform(input_label, spectrum_label, output_label)
 
 def apply_separable_dft(input_label, spectrum_label, output_label):
-    separable_dft(input_label, spectrum_label, output_label)
+    separable_discrete_fourier_transform(input_label, spectrum_label, output_label)
 
 def apply_fft(input_label, spectrum_label, output_label):
-    fft(input_label, spectrum_label, output_label)
+    fast_fourier_transform(input_label, spectrum_label, output_label)
 
 def apply_fft_compression(input_label, spectrum_label, output_label, low_cut_var, high_cut_var):
-    fft_compression(input_label, spectrum_label, output_label, low_cut_var, high_cut_var )
+    fast_fourier_transform_compression(input_label, spectrum_label, output_label, low_cut_var, high_cut_var )
 
 def apply_pseudocolor_spectrum(spectrum_label, bins_var):
     pseudocolor_spectrum(spectrum_label, bins_var)
